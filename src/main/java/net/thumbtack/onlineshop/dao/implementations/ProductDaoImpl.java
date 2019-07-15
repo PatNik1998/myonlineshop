@@ -1,5 +1,6 @@
 package net.thumbtack.onlineshop.dao.implementations;
 
+import net.thumbtack.onlineshop.dao.MySession;
 import net.thumbtack.onlineshop.dao.ProductDao;
 import net.thumbtack.onlineshop.entities.Product;
 import net.thumbtack.onlineshop.common.HibernateSessionFactory;
@@ -13,67 +14,48 @@ import java.util.List;
 @Service
 public class ProductDaoImpl implements ProductDao {
     public void delete(int id) {
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        session.beginTransaction();
+        Session session = MySession.initSession();
         Product del = (Product) session.get(Product.class, id);
         session.delete(del);
         session.getTransaction().commit();
-        if (session.isOpen()) {
-            session.close();
-        }
+        MySession.endSession(session);
     }
 
     public List<Product> getAll() {
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        session.beginTransaction();
+        Session session = MySession.initSession();
         String hql = String.format("from %s", Product.class.getCanonicalName());
         Query SQLQuery = session.createQuery(hql);
         ArrayList<Product> result = (ArrayList<Product>) SQLQuery.list();
         session.getTransaction().commit();
-        if (session.isOpen()) {
-            session.close();
-        }
+        MySession.endSession(session);
         return result;
     }
 
     public Product getById(int id) {
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        session.beginTransaction();
+        Session session = MySession.initSession();
         Product result = (Product) session.get(Product.class, id);
         session.getTransaction().commit();
-        if (session.isOpen()) {
-            session.close();
-        }
+        MySession.endSession(session);
         return result;
     }
 
     public void update(Product product) {
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        session.beginTransaction();
+        Session session = MySession.initSession();
         session.update(product);
-        session.getTransaction().commit();
-        if (session.isOpen()) {
-            session.close();
-        }
+        MySession.endSession(session);
     }
 
     public void add(Product product) {
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        session.beginTransaction();
+        Session session = MySession.initSession();
         session.save(product);
-        session.getTransaction().commit();
-        session.close();
+        MySession.endSession(session);
     }
 
     public void clear() {
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        session.beginTransaction();
+        Session session = MySession.initSession();
         String hql = String.format("delete from %s", Product.class.getCanonicalName());
         Query query = session.createQuery(hql);
         query.executeUpdate();
-        session.getTransaction().commit();
-        if (session.isOpen()) {
-            session.close();
-        }
+        MySession.endSession(session);
     }
 }
