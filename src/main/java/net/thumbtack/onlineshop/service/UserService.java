@@ -1,6 +1,6 @@
 package net.thumbtack.onlineshop.service;
 
-import net.thumbtack.onlineshop.dto.request.UserDTO;
+import net.thumbtack.onlineshop.dto.UserDTO;
 import org.springframework.stereotype.Service;
 
 

@@ -1,8 +1,8 @@
 package net.thumbtack.onlineshop.common;
 
-import net.thumbtack.onlineshop.dto.request.CategoryDto;
-import net.thumbtack.onlineshop.dto.request.ProductDto;
-import net.thumbtack.onlineshop.dto.request.UserDTO;
+import net.thumbtack.onlineshop.dto.CategoryDto;
+import net.thumbtack.onlineshop.dto.ProductDto;
+import net.thumbtack.onlineshop.dto.UserDTO;
 import net.thumbtack.onlineshop.entities.Administrator;
 import net.thumbtack.onlineshop.entities.Client;
 import net.thumbtack.onlineshop.errors.UserErrorCode;

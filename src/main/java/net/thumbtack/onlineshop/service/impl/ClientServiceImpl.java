@@ -4,17 +4,17 @@ import net.thumbtack.onlineshop.common.Validator;
 import net.thumbtack.onlineshop.dao.implementations.AdministratorDaoImpl;
 import net.thumbtack.onlineshop.dao.implementations.ClientDaoImpl;
 import net.thumbtack.onlineshop.dao.implementations.ProductDaoImpl;
-import net.thumbtack.onlineshop.dao.interfaces.AdministratorDao;
-import net.thumbtack.onlineshop.dao.interfaces.ClientDao;
-import net.thumbtack.onlineshop.dao.interfaces.ProductDao;
+import net.thumbtack.onlineshop.dao.AdministratorDao;
+import net.thumbtack.onlineshop.dao.ClientDao;
+import net.thumbtack.onlineshop.dao.ProductDao;
 import net.thumbtack.onlineshop.dto.response.BuyProductsDTOResponse;
-import net.thumbtack.onlineshop.dto.request.ProductDTOWithNameCategories;
-import net.thumbtack.onlineshop.dto.request.UserDTO;
+import net.thumbtack.onlineshop.dto.ProductDTOWithNameCategories;
+import net.thumbtack.onlineshop.dto.UserDTO;
 import net.thumbtack.onlineshop.entities.Client;
 import net.thumbtack.onlineshop.errors.UserErrorCode;
 import net.thumbtack.onlineshop.errors.UserServiceError;
 import net.thumbtack.onlineshop.service.Sessions;
-import net.thumbtack.onlineshop.service.interfaces.ClientService;
+import net.thumbtack.onlineshop.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -79,12 +79,31 @@ public class ClientServiceImpl implements ClientService {
 
     public UserDTO editClientProfile(String sessionId, UserDTO userDTO) {
         Client client = (Client) sessions.getUser(sessionId);
+        validator.editClientValidate(userDTO);
+        if(userDTO.getErrors().isEmpty()){
+            client.setPassword(userDTO.getNewPassword());
+            client.setFirstName(userDTO.getFirstName());
+            client.setLastName(userDTO.getLastName());
+            client.setPatronymic(userDTO.getPatronymic());
+            client.setEmail(userDTO.getEmail());
+            client.setAddress(userDTO.getAddress());
+            client.setPhone(userDTO.getPhone());
+            clientDao.update(client);
+
+            userDTO.setNewPassword(null);
+            userDTO.setOldPassword(null);
+            return  userDTO;
+        }
     }
 
 
 
     public UserDTO addDeposit(String sessionId, UserDTO userDTO) {
-        return null;
+         Client client = (Client) sessions.getUser(sessionId);
+         client.setDeposit(client.getDeposit() + userDTO.getDeposit());
+         clientDao.update(client);
+         userDTO.setDeposit(client.getDeposit());
+         return userDTO;
     }
 
     public UserDTO getDeposit(String sessionId) {

@@ -1,7 +1,6 @@
 package net.thumbtack.onlineshop.dao.implementations;
 
-import net.thumbtack.onlineshop.dao.interfaces.CommonDao;
-import net.thumbtack.onlineshop.dao.interfaces.ProductDao;
+import net.thumbtack.onlineshop.dao.ProductDao;
 import net.thumbtack.onlineshop.entities.Product;
 import net.thumbtack.onlineshop.common.HibernateSessionFactory;
 import org.hibernate.Query;

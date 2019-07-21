@@ -1,6 +1,6 @@
 package net.thumbtack.onlineshop.service;
 
-import net.thumbtack.onlineshop.dto.request.CategoryDto;
+import net.thumbtack.onlineshop.dto.CategoryDto;
 
 import java.util.List;
 

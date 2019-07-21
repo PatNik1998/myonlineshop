@@ -1,6 +1,6 @@
 package net.thumbtack.onlineshop.dao.implementations;
 
-import net.thumbtack.onlineshop.dao.interfaces.ClientDao;
+import net.thumbtack.onlineshop.dao.ClientDao;
 import net.thumbtack.onlineshop.entities.Client;
 import net.thumbtack.onlineshop.common.HibernateSessionFactory;
 import org.hibernate.Query;
@@ -46,6 +46,8 @@ public class ClientDaoImpl implements ClientDao {
         }
         return result;
     }
+
+
 
     public void update(Client client) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();

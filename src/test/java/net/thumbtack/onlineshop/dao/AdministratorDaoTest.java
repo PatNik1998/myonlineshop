@@ -1,11 +1,7 @@
 package net.thumbtack.onlineshop.dao;
 
 import net.thumbtack.onlineshop.dao.implementations.AdministratorDaoImpl;
-import net.thumbtack.onlineshop.dao.implementations.UserDaoImpl;
-import net.thumbtack.onlineshop.dao.interfaces.AdministratorDao;
 import net.thumbtack.onlineshop.entities.Administrator;
-import net.thumbtack.onlineshop.entities.Client;
-import net.thumbtack.onlineshop.entities.User;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

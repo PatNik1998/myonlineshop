@@ -1,6 +1,6 @@
 package net.thumbtack.onlineshop.dao.implementations;
 
-import net.thumbtack.onlineshop.dao.interfaces.CategoryDao;
+import net.thumbtack.onlineshop.dao.CategoryDao;
 import net.thumbtack.onlineshop.entities.Category;
 import net.thumbtack.onlineshop.common.HibernateSessionFactory;
 import org.hibernate.Query;

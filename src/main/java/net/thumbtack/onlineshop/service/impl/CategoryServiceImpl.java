@@ -2,12 +2,12 @@ package net.thumbtack.onlineshop.service.impl;
 
 import net.thumbtack.onlineshop.common.Validator;
 import net.thumbtack.onlineshop.dao.implementations.CategoryDaoImpl;
-import net.thumbtack.onlineshop.dao.interfaces.CategoryDao;
-import net.thumbtack.onlineshop.dto.request.CategoryDto;
+import net.thumbtack.onlineshop.dao.CategoryDao;
+import net.thumbtack.onlineshop.dto.CategoryDto;
 import net.thumbtack.onlineshop.entities.Category;
 import net.thumbtack.onlineshop.errors.UserErrorCode;
 import net.thumbtack.onlineshop.errors.UserServiceError;
-import net.thumbtack.onlineshop.service.interfaces.CategoryService;
+import net.thumbtack.onlineshop.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

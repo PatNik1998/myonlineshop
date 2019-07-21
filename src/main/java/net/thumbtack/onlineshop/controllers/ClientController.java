@@ -1,18 +1,17 @@
 package net.thumbtack.onlineshop.controllers;
 
 
-import net.thumbtack.onlineshop.dto.request.UserDTO;
-import net.thumbtack.onlineshop.service.interfaces.ClientService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import net.thumbtack.onlineshop.dto.UserDTO;
+import net.thumbtack.onlineshop.service.impl.ClientServiceImpl;
+import net.thumbtack.onlineshop.service.ClientService;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.Cookie;
 
 public class ClientController {
     private ClientService clientService;
 
-    public ClientController(ClientService clientService) {
+    public ClientController(ClientServiceImpl clientService) {
         this.clientService = clientService;
     }
 
@@ -22,6 +21,16 @@ public class ClientController {
         return clientService.registerClient(dto);
     }
 
+    @PutMapping(value = "/clients")
+    public UserDTO editClient(@RequestBody UserDTO dto,@RequestHeader @CookieValue(value = "JAVASESSIONID", required = false) Cookie cookie) {
+        UserDTO response = clientService.editClientProfile(dto.getCookie().getValue(), dto);
+        return response;
+        }
 
+    @PutMapping(value = "/deposits")
+    public UserDTO deposit(@RequestBody UserDTO dto, @CookieValue(value = "JAVASESSIONID", required = false) Cookie cookie){
+        UserDTO response = clientService.addDeposit(cookie.getValue(),dto);
+        return response;
+    }
 
 }

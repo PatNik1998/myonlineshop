@@ -2,13 +2,9 @@ package net.thumbtack.onlineshop.dao;
 
 import net.thumbtack.onlineshop.dao.implementations.ClientDaoImpl;
 import net.thumbtack.onlineshop.dao.implementations.ProductDaoImpl;
-import net.thumbtack.onlineshop.dao.implementations.UserDaoImpl;
-import net.thumbtack.onlineshop.dao.interfaces.ClientDao;
-import net.thumbtack.onlineshop.dao.interfaces.ProductDao;
 import net.thumbtack.onlineshop.entities.Item;
 import net.thumbtack.onlineshop.entities.Client;
 import net.thumbtack.onlineshop.entities.Product;
-import net.thumbtack.onlineshop.entities.User;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;

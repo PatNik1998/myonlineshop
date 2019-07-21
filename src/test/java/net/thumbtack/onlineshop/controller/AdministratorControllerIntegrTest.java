@@ -1,25 +1,17 @@
 package net.thumbtack.onlineshop.controller;
 
-import net.thumbtack.onlineshop.dto.request.CategoryDto;
-import net.thumbtack.onlineshop.dto.request.ProductDto;
-import net.thumbtack.onlineshop.dto.request.UserDTO;
+import net.thumbtack.onlineshop.dto.CategoryDto;
+import net.thumbtack.onlineshop.dto.ProductDto;
+import net.thumbtack.onlineshop.dto.UserDTO;
 
-import net.thumbtack.onlineshop.entities.Category;
-import net.thumbtack.onlineshop.entities.Product;
 import net.thumbtack.onlineshop.service.Sessions;
-import net.thumbtack.onlineshop.service.impl.UserServiceImpl;
-import net.thumbtack.onlineshop.service.interfaces.DbService;
-import net.thumbtack.onlineshop.service.interfaces.UserService;
+import net.thumbtack.onlineshop.service.DbService;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 

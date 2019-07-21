@@ -1,11 +1,11 @@
 package net.thumbtack.onlineshop.controllers;
 
-import net.thumbtack.onlineshop.dto.request.UserDTO;
+import net.thumbtack.onlineshop.dto.UserDTO;
 import net.thumbtack.onlineshop.service.Sessions;
 import net.thumbtack.onlineshop.service.impl.AdministratorServiceImpl;
 import net.thumbtack.onlineshop.service.impl.UserServiceImpl;
-import net.thumbtack.onlineshop.service.interfaces.AdministratorService;
-import net.thumbtack.onlineshop.service.interfaces.UserService;
+import net.thumbtack.onlineshop.service.AdministratorService;
+import net.thumbtack.onlineshop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

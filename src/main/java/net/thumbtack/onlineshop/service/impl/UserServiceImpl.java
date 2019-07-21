@@ -3,15 +3,15 @@ package net.thumbtack.onlineshop.service.impl;
 import net.thumbtack.onlineshop.common.Validator;
 import net.thumbtack.onlineshop.dao.implementations.ProductDaoImpl;
 import net.thumbtack.onlineshop.dao.implementations.UserDaoImpl;
-import net.thumbtack.onlineshop.dao.interfaces.ProductDao;
-import net.thumbtack.onlineshop.dto.request.UserDTO;
+import net.thumbtack.onlineshop.dao.ProductDao;
+import net.thumbtack.onlineshop.dto.UserDTO;
 import net.thumbtack.onlineshop.entities.Administrator;
 import net.thumbtack.onlineshop.entities.Client;
 import net.thumbtack.onlineshop.entities.User;
 import net.thumbtack.onlineshop.errors.UserErrorCode;
 import net.thumbtack.onlineshop.errors.UserServiceError;
 import net.thumbtack.onlineshop.service.Sessions;
-import net.thumbtack.onlineshop.service.interfaces.UserService;
+import net.thumbtack.onlineshop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

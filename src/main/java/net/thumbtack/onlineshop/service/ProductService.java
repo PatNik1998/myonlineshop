@@ -1,14 +1,11 @@
 package net.thumbtack.onlineshop.service;
 
-import net.thumbtack.onlineshop.dto.request.ProductDTOWithIdCategories;
-import net.thumbtack.onlineshop.dto.request.ProductDTOWithNameCategories;
-import net.thumbtack.onlineshop.dto.request.ProductDto;
-
-import java.util.List;
+import net.thumbtack.onlineshop.dto.ProductDto;
 
 public interface ProductService {
-    ProductDto getProduct( int productId);
+    ProductDto getProduct(int productId);
     //List<ProductDTOWithNameCategories> getProducts(String sessionId, int[] categoriesId, String order);
     ProductDto addProduct(ProductDto productDTO);
+   // ProductDto editProduct(String sessionId, ProductDTOWithIdCategories productDTO);
     String deleteProduct(int productId);
 }

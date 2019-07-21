@@ -1,7 +1,7 @@
 package net.thumbtack.onlineshop.dao.implementations;
 
 import net.thumbtack.onlineshop.common.HibernateSessionFactory;
-import net.thumbtack.onlineshop.dao.interfaces.UserDao;
+import net.thumbtack.onlineshop.dao.UserDao;
 import net.thumbtack.onlineshop.entities.User;
 import org.hibernate.Query;
 import org.hibernate.Session;
