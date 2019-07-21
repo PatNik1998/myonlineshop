@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import net.thumbtack.onlineshop.entities.Category;
 import net.thumbtack.onlineshop.errors.UserServiceError;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

@@ -1,31 +1,17 @@
 package net.thumbtack.onlineshop.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import net.thumbtack.onlineshop.errors.UserServiceError;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class ProductDTOWithIdCategories {
-    @JsonInclude(value = JsonInclude.Include.NON_NULL)
-    private Integer id;
-    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private int id;
     private String name;
-    @JsonInclude(value = JsonInclude.Include.NON_NULL)
-    private Integer price;
-    @JsonInclude(value = JsonInclude.Include.NON_NULL)
-    private Integer count;
-    @JsonInclude(value = JsonInclude.Include.NON_NULL)
-    private Integer[] categories;
-
-    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
-    private List<UserServiceError> errors;
+    private int price;
+    private int count;
+    private int[] categories;
 
     public ProductDTOWithIdCategories() {
-        errors = new ArrayList<>();
+
     }
 
-    public ProductDTOWithIdCategories(Integer id, String name, Integer price, Integer count, Integer[] categories) {
+    public ProductDTOWithIdCategories(int id, String name, int price, int count, int[] categories) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -33,11 +19,11 @@ public class ProductDTOWithIdCategories {
         this.categories = categories;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -49,27 +35,27 @@ public class ProductDTOWithIdCategories {
         this.name = name;
     }
 
-    public Integer getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 
-    public Integer getCount() {
+    public int getCount() {
         return count;
     }
 
-    public void setCount(Integer count) {
+    public void setCount(int count) {
         this.count = count;
     }
 
-    public Integer[] getCategories() {
+    public int[] getCategories() {
         return categories;
     }
 
-    public void setCategories(Integer[] categories) {
+    public void setCategories(int[] categories) {
         this.categories = categories;
     }
 }

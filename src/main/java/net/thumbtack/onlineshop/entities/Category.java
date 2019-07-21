@@ -8,11 +8,7 @@ import java.util.Set;
 @Entity
 @Table
 public class Category implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, unique = true)
     private int idCategory;
-    @Column(nullable = false, length = 45, unique = true)
     private String name;
     private Category parentCategory;
     private Set<Product> products;
@@ -41,7 +37,9 @@ public class Category implements Serializable {
         this.products = products;
     }
 
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, unique = true)
     public int getIdCategory() {
         return idCategory;
     }
@@ -50,7 +48,7 @@ public class Category implements Serializable {
         this.idCategory = idCategory;
     }
 
-
+    @Column(nullable = false, length = 45, unique = true)
     public String getName() {
         return name;
     }

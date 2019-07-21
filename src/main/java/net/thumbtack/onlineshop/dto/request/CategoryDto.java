@@ -31,10 +31,6 @@ public class CategoryDto {
     }
 
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public void setParentId(Integer parentId) {
         this.parentId = parentId;
     }

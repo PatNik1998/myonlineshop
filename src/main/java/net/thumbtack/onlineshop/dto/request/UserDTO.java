@@ -6,18 +6,14 @@ import net.thumbtack.onlineshop.entities.Client;
 import net.thumbtack.onlineshop.errors.UserErrorCode;
 import net.thumbtack.onlineshop.errors.UserServiceError;
 
+import javax.servlet.http.Cookie;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//@PropertySource("application.properties")
-public class UserDTO {
-//    @Value("${max_name_length}")
-    private int length = 20;
 
-//    @Value("${min_password_length}")
-    private int minPasswordLength = 8;
+public class UserDTO {
 
     @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private Integer id;
@@ -49,34 +45,12 @@ public class UserDTO {
     private String newPassword;
     @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
     private List<UserServiceError> errors = new ArrayList<>();
+    @JsonInclude(value = JsonInclude.Include.NON_NULL )
+    private Cookie cookie;
 
     public UserDTO() {
 
     }
-
-    public void setFieldOfClientForJson(Client client) {
-        id = client.getId();
-        firstName = client.getFirstName();
-        lastName = client.getLastName();
-        patronymic = client.getPatronymic();
-        email = client.getEmail();
-        address = client.getAddress();
-        phone = client.getPhone();
-        password = null;
-        login = null;
-        deposit = 0;
-    }
-
-    public void setFieldOfAdminForJson(Administrator admin) {
-        id = admin.getId();
-        firstName = admin.getFirstName();
-        lastName = admin.getLastName();
-        patronymic = admin.getPatronymic();
-        position = admin.getPosition();
-        password = null;
-        login = null;
-    }
-
 
 
     public void addError(UserServiceError error) {
@@ -203,6 +177,33 @@ public class UserDTO {
         this.errors = errors;
     }
 
+    public Cookie getCookie() {
+        return cookie;
+    }
 
+    public void setCookie(Cookie cookie) {
+        this.cookie = cookie;
+    }
+
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", patronymic='" + patronymic + '\'' +
+                ", position='" + position + '\'' +
+                ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", deposit=" + deposit +
+                ", userType='" + userType + '\'' +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", oldPassword='" + oldPassword + '\'' +
+                ", newPassword='" + newPassword + '\'' +
+                ", errors=" + errors +
+                '}';
+    }
 }
 

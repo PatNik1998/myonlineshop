@@ -7,7 +7,7 @@ import java.io.Serializable;
 @Entity
 @Table
 public class Administrator extends User implements Serializable {
-    @Column(nullable = false)
+
     private String position;
 
     public Administrator() {
@@ -19,7 +19,7 @@ public class Administrator extends User implements Serializable {
         this.position = position;
     }
 
-
+    @Column(nullable = false)
     public String getPosition() {
         return position;
     }
@@ -27,7 +27,6 @@ public class Administrator extends User implements Serializable {
     public void setPosition(String position) {
         this.position = position;
     }
-
 
     @Override
     public boolean equals(Object o) {

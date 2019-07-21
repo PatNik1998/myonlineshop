@@ -2,18 +2,19 @@ package net.thumbtack.onlineshop.service.impl;
 
 import net.thumbtack.onlineshop.dao.implementations.CategoryDaoImpl;
 import net.thumbtack.onlineshop.dao.implementations.ProductDaoImpl;
-import net.thumbtack.onlineshop.dao.CategoryDao;
-import net.thumbtack.onlineshop.dao.ProductDao;
+import net.thumbtack.onlineshop.dao.interfaces.CategoryDao;
+import net.thumbtack.onlineshop.dao.interfaces.ProductDao;
 import net.thumbtack.onlineshop.dto.request.ProductDto;
 import net.thumbtack.onlineshop.entities.Category;
 import net.thumbtack.onlineshop.entities.Product;
-import net.thumbtack.onlineshop.service.ProductService;
+import net.thumbtack.onlineshop.service.interfaces.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
 @Service
 public class ProductServiceImpl implements ProductService {
+
     private ProductDao productDao;
     private CategoryDao categoryDao;
 
@@ -57,3 +58,4 @@ public class ProductServiceImpl implements ProductService {
         return "{}";
     }
 }
+

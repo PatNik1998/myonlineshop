@@ -9,15 +9,9 @@ import java.util.Set;
 @Entity
 @Table
 public class Product implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, unique = true)
     private int idProduct;
-    @Column(nullable = false)
     private int price;
-    @Column(nullable = false, length = 45, unique = true)
     private String name;
-    @Column(nullable = true)
     private Integer count;
     private Set<Category> categories;
 
@@ -36,7 +30,9 @@ public class Product implements Serializable {
         this(idProduct, price, name, count, new HashSet<Category>());
     }
 
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, unique = true)
     public int getIdProduct() {
         return idProduct;
     }
@@ -45,7 +41,7 @@ public class Product implements Serializable {
         this.idProduct = idProduct;
     }
 
-
+    @Column(nullable = false, length = 45, unique = true)
     public String getName() {
         return name;
     }
@@ -54,7 +50,7 @@ public class Product implements Serializable {
         this.name = name;
     }
 
-
+    @Column(nullable = false)
     public int getPrice() {
         return price;
     }
@@ -63,7 +59,7 @@ public class Product implements Serializable {
         this.price = cost;
     }
 
-
+    @Column(nullable = true)
     public Integer getCount() {
         return count;
     }

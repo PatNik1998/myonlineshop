@@ -2,6 +2,8 @@ package net.thumbtack.onlineshop.service;
 
 import net.thumbtack.onlineshop.entities.User;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.http.Cookie;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,18 +12,30 @@ import java.util.Map;
 public class Sessions {
 
 
-    private static Map<String, User> sessions = new HashMap<>();
+    private Map<String, User> sessions = new HashMap<>();
 
+    private Map<Integer,Cookie> tokens = new HashMap<>();
 
-    public static void addSession(String token, User user) {
+    public void addSession(String token, User user) {
         sessions.put(token, user);
     }
 
-    public static void removeSession(String token) {
+    public void removeSession(String token) {
         sessions.remove(token);
     }
 
-    public static User getUser(String token) {
+    public User getUser(String token) {
         return sessions.get(token);
+    }
+
+    public void addTokens(Integer id, Cookie token){
+        tokens.put(id,token);
+    }
+
+    public void removeTokens(Integer id){
+        tokens.remove(id);
+    }
+    public Cookie getToken(Integer id){
+        return tokens.get(id);
     }
 }

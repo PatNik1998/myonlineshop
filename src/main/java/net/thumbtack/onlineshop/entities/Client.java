@@ -9,13 +9,9 @@ import java.util.List;
 @Entity
 @Table
 public class Client extends User implements Serializable {
-    @Column(nullable = true, length = 45)
     private String email;
-    @Column(nullable = true, length = 100)
     private String address;
-    @Column(nullable = true, unique = true)
     private String phone;
-    @Column(nullable = true)
     private int deposit;
     private List<Item> cart;
     public Client() {
@@ -40,7 +36,7 @@ public class Client extends User implements Serializable {
         this.cart = cart;
     }
 
-
+    @Column(nullable = true, length = 45)
     public String getEmail() {
         return email;
     }
@@ -49,7 +45,7 @@ public class Client extends User implements Serializable {
         this.email = email;
     }
 
-
+    @Column(nullable = true, length = 100)
     public String getAddress() {
         return address;
     }
@@ -58,7 +54,7 @@ public class Client extends User implements Serializable {
         this.address = address;
     }
 
-
+    @Column(nullable = true, unique = true)
     public String getPhone() {
         return phone;
     }
@@ -67,7 +63,7 @@ public class Client extends User implements Serializable {
         this.phone = phone;
     }
 
-
+    @Column(nullable = true)
     public int getDeposit() {
         return deposit;
     }

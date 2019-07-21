@@ -1,16 +1,20 @@
 package net.thumbtack.onlineshop.service.impl;
 
+import net.thumbtack.onlineshop.common.Validator;
 import net.thumbtack.onlineshop.dao.implementations.AdministratorDaoImpl;
 import net.thumbtack.onlineshop.dao.implementations.ClientDaoImpl;
 import net.thumbtack.onlineshop.dao.implementations.ProductDaoImpl;
-import net.thumbtack.onlineshop.dao.AdministratorDao;
-import net.thumbtack.onlineshop.dao.ClientDao;
-import net.thumbtack.onlineshop.dao.ProductDao;
+import net.thumbtack.onlineshop.dao.interfaces.AdministratorDao;
+import net.thumbtack.onlineshop.dao.interfaces.ClientDao;
+import net.thumbtack.onlineshop.dao.interfaces.ProductDao;
 import net.thumbtack.onlineshop.dto.response.BuyProductsDTOResponse;
 import net.thumbtack.onlineshop.dto.request.ProductDTOWithNameCategories;
 import net.thumbtack.onlineshop.dto.request.UserDTO;
 import net.thumbtack.onlineshop.entities.Client;
-import net.thumbtack.onlineshop.service.ClientService;
+import net.thumbtack.onlineshop.errors.UserErrorCode;
+import net.thumbtack.onlineshop.errors.UserServiceError;
+import net.thumbtack.onlineshop.service.Sessions;
+import net.thumbtack.onlineshop.service.interfaces.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,16 +27,20 @@ public class ClientServiceImpl implements ClientService {
     private AdministratorDao adminDao;
     private ClientDao clientDao;
     private ProductDao productDao;
+    private Validator validator;
+    private Sessions sessions;
 
-    @Autowired
-    public ClientServiceImpl(ClientDaoImpl clientDao, ProductDaoImpl productDao, AdministratorDaoImpl adminDao) {
+@Autowired
+    public ClientServiceImpl(ClientDaoImpl clientDao, ProductDaoImpl productDao, AdministratorDaoImpl adminDao,Validator validator, Sessions sessions) {
         this.clientDao = clientDao;
         this.productDao = productDao;
         this.adminDao = adminDao;
+        this.validator = validator;
+        this.sessions = sessions;
     }
 
- /*   public UserDTO registerClient(UserDTO dto) {
-        dto.registerClientValidate();
+    public UserDTO registerClient(UserDTO dto) {
+       // dto.registerClientValidate();
         if (dto.getErrors().isEmpty()) {
             Client client = new Client();
             client.setPhone(dto.getPhone());
@@ -48,7 +56,7 @@ public class ClientServiceImpl implements ClientService {
             }
             catch (Exception ex) {
                 dto.addError(new UserServiceError(UserErrorCode.USER_ALREADY_EXISTS, "Пользователь с логином " + dto.getLogin() + " уже существует", "login"));
-                dto.clearField();
+             //   dto.clearField();
                 return dto;
             }
             dto.setPassword(null);
@@ -57,13 +65,12 @@ public class ClientServiceImpl implements ClientService {
         }
         return dto;
     }
-*/
     public List<UserDTO> getClients(String sessionId) {
         List<UserDTO> result = new ArrayList<>();
         List<Client> clients = clientDao.getAll();
         for (Client client : clients) {
             UserDTO userDTO = new UserDTO();
-            userDTO.setFieldOfClientForJson(client);
+            validator.setFieldOfClientForJson(client, userDTO);
             userDTO.setUserType(client.getClass().getSimpleName());
             result.add(userDTO);
         }
@@ -71,7 +78,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     public UserDTO editClientProfile(String sessionId, UserDTO userDTO) {
-        return null;
+        Client client = (Client) sessions.getUser(sessionId);
     }
 
 

@@ -1,6 +1,7 @@
 package net.thumbtack.onlineshop.dao;
 
 import net.thumbtack.onlineshop.dao.implementations.CategoryDaoImpl;
+import net.thumbtack.onlineshop.dao.interfaces.CategoryDao;
 import net.thumbtack.onlineshop.entities.Category;
 import org.junit.Assert;
 import org.junit.Before;
