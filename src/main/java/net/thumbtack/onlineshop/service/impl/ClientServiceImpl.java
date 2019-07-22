@@ -98,39 +98,19 @@ public class ClientServiceImpl implements ClientService {
 
 
 
-    public UserDTO addDeposit(String sessionId, UserDTO userDTO) {
-         Client client = (Client) sessions.getUser(sessionId);
-         client.setDeposit(client.getDeposit() + userDTO.getDeposit());
-         clientDao.update(client);
-         userDTO.setDeposit(client.getDeposit());
-         return userDTO;
+    public UserDTO addDeposit(Client client, UserDTO userDTO) {
+     int numberDeposit  = userDTO.getDeposit();
+     client.setDeposit(client.getDeposit() + numberDeposit);
+     clientDao.update(client);
+     UserDTO result = new UserDTO(client);
+     return result;
+}
+
+    public UserDTO getDeposit(Client client) {
+        return new UserDTO(client);
     }
 
-    public UserDTO getDeposit(String sessionId) {
-        return null;
-    }
 
-    public ProductDTOWithNameCategories buyProduct(String sessionId, ProductDTOWithNameCategories productDTO) {
-        return null;
-    }
 
-    public List<ProductDTOWithNameCategories> addProductToCart(String sessionId, ProductDTOWithNameCategories ProductDTO) {
-        return null;
-    }
 
-    public String deleteProductFromCart(String sessionId, int productId) {
-        return null;
-    }
-
-    public List<ProductDTOWithNameCategories> editProductOfCart(String sessionId, ProductDTOWithNameCategories ProductDTO) {
-        return null;
-    }
-
-    public List<ProductDTOWithNameCategories> getCart(String sessionId) {
-        return null;
-    }
-
-    public BuyProductsDTOResponse buyProducts(String sessionId, List<ProductDTOWithNameCategories> products) {
-        return null;
-    }
 }

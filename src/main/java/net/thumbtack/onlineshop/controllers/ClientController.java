@@ -1,18 +1,32 @@
 package net.thumbtack.onlineshop.controllers;
 
 
+import net.thumbtack.onlineshop.dto.ProductDto;
 import net.thumbtack.onlineshop.dto.UserDTO;
+import net.thumbtack.onlineshop.entities.Client;
+import net.thumbtack.onlineshop.entities.User;
+import net.thumbtack.onlineshop.service.Sessions;
+import net.thumbtack.onlineshop.service.impl.CartServiceImpl;
 import net.thumbtack.onlineshop.service.impl.ClientServiceImpl;
 import net.thumbtack.onlineshop.service.ClientService;
+import net.thumbtack.onlineshop.service.interfaces.CartService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import sun.nio.cs.US_ASCII;
 
 import javax.servlet.http.Cookie;
+import java.util.List;
 
+@RestController
 public class ClientController {
     private ClientService clientService;
-
-    public ClientController(ClientServiceImpl clientService) {
+    private Sessions sessions;
+    private CartService cartService;
+@Autowired
+    public ClientController(ClientServiceImpl clientService, Sessions sessions, CartServiceImpl cartService) {
         this.clientService = clientService;
+        this.sessions = sessions;
+        this.cartService = cartService;
     }
 
 //  @CookieValue(value = "JAVASESSIONID", required = false) Cookie cookieName, HttpServletResponse response
@@ -32,5 +46,39 @@ public class ClientController {
         UserDTO response = clientService.addDeposit(cookie.getValue(),dto);
         return response;
     }
+
+    @GetMapping(value = "/deposits")
+    public UserDTO getDeposit(@CookieValue(value = "JAVASESSIONID", required = false) Cookie cookie){
+        User user = sessions.getUser(cookie.getValue());
+        return clientService.getDeposit((Client) user);
+    }
+
+    @PostMapping(value = "/purchases")
+    public ProductDto buyProduct(@CookieValue(value = "JAVASESSIONID", required = false) Cookie cookie, @RequestBody ProductDto productDto){
+      User user = sessions.getUser(cookie.getValue());
+      return cartService.buyProduct((Client) user, productDto);
+    }
+
+    @PostMapping(value = "/baskets")
+    public List<ProductDto> addProductToCart(@CookieValue(value = "JAVASESSIONID", required = false) Cookie cookie, @RequestBody ProductDto productDto){
+     User user = sessions.getUser(cookie.getValue());
+     return cartService.addProductToCart((Client) user, productDto);
+    }
+
+    @PutMapping(value = "/baskets")
+    public List<ProductDto> editProductFromCart(@CookieValue(value = "JAVASESSIONID", required = false) Cookie cookie, @RequestBody ProductDto productDto){
+    User user = sessions.getUser(cookie.getValue());
+    return cartService.editProductFromCart((Client) user,productDto);
+    }
+
+    @PostMapping(value = "/baskets")
+    public List<ProductDto> getCart(@CookieValue(value = "JAVASESSIONID", required = false) Cookie cookie){
+       User user = sessions.getUser(cookie.getValue());
+        return cartService.getCart((Client) user);
+    }
+
+
+
+
 
 }

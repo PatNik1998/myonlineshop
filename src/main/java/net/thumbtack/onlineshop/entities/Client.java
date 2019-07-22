@@ -5,6 +5,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table
@@ -72,10 +73,10 @@ public class Client extends User implements Serializable {
         this.deposit = deposit;
     }
 
-    public void addItem(Product product) {
+    public void addItem(Product product, Integer count) {
         for (Item item: cart) {
             if (item.getProduct().equals(product)) {
-                item.setAmount(item.getAmount() + 1);
+                item.setAmount(item.getAmount() + count);
                 return;
             }
         }
@@ -120,5 +121,24 @@ public class Client extends User implements Serializable {
         result = 31 * result + phone.hashCode();
         result = 31 * result + deposit;
         return result;
+    }
+
+    public Item getItemById(int id){
+        Optional<Item> item = cart.stream()
+                .filter(product -> product.getProduct().getIdProduct() == id)
+                .findFirst();
+        if(item.isPresent()){
+            return item.get();
+        }
+        return null;
+
+    }
+
+    public void editItem(Item item, int count){
+        item.setAmount(count);
+    }
+
+    public void deleteItem(Item item){
+        cart.remove(item);
     }
 }
