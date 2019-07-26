@@ -7,7 +7,7 @@ import net.thumbtack.onlineshop.dao.implementations.ProductDaoImpl;
 import net.thumbtack.onlineshop.dao.AdministratorDao;
 import net.thumbtack.onlineshop.dao.ClientDao;
 import net.thumbtack.onlineshop.dao.ProductDao;
-import net.thumbtack.onlineshop.dto.response.BuyProductsDTOResponse;
+
 import net.thumbtack.onlineshop.dto.ProductDTOWithNameCategories;
 import net.thumbtack.onlineshop.dto.UserDTO;
 import net.thumbtack.onlineshop.entities.Client;
@@ -30,6 +30,7 @@ public class ClientServiceImpl implements ClientService {
     private Validator validator;
     private Sessions sessions;
 
+
 @Autowired
     public ClientServiceImpl(ClientDaoImpl clientDao, ProductDaoImpl productDao, AdministratorDaoImpl adminDao,Validator validator, Sessions sessions) {
         this.clientDao = clientDao;
@@ -51,14 +52,10 @@ public class ClientServiceImpl implements ClientService {
             client.setPatronymic(dto.getPatronymic());
             client.setLogin(dto.getLogin());
             client.setPassword(dto.getPassword());
-            try {
-                clientDao.add(client);
-            }
-            catch (Exception ex) {
-                dto.addError(new UserServiceError(UserErrorCode.USER_ALREADY_EXISTS, "Пользователь с логином " + dto.getLogin() + " уже существует", "login"));
-             //   dto.clearField();
-                return dto;
-            }
+
+            clientDao.add(client);
+
+            dto.setId(client.getId());
             dto.setPassword(null);
             dto.setLogin(null);
             return dto;
@@ -94,6 +91,7 @@ public class ClientServiceImpl implements ClientService {
             userDTO.setOldPassword(null);
             return  userDTO;
         }
+        return userDTO;
     }
 
 
@@ -102,13 +100,13 @@ public class ClientServiceImpl implements ClientService {
      int numberDeposit  = userDTO.getDeposit();
      client.setDeposit(client.getDeposit() + numberDeposit);
      clientDao.update(client);
-     UserDTO result = new UserDTO(client);
-     return result;
+    // UserDTO result = new UserDTO(client);
+     return null;
 }
 
-    public UserDTO getDeposit(Client client) {
-        return new UserDTO(client);
-    }
+   // public UserDTO getDeposit(Client client) {
+      //  return new UserDTO(client);
+   // }
 
 
 

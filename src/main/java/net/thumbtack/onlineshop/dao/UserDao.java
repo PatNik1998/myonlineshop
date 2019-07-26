@@ -6,4 +6,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UserDao {
     User getUserByLoginAndPassword(String login, String password);
+    User getUserById(Integer id);
 }

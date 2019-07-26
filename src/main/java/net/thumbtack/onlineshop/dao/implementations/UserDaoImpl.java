@@ -21,7 +21,7 @@ public class UserDaoImpl implements UserDao {
         return result;
     }
 
-    public User getUserById(int id) {
+    public User getUserById(Integer id) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         String hql = String.format("from " + net.thumbtack.onlineshop.entities.User.class.getCanonicalName() + " where id = " + id);
         Query SQLQuery = session.createQuery(hql);

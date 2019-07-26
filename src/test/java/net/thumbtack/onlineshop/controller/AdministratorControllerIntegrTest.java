@@ -116,7 +116,7 @@ public class AdministratorControllerIntegrTest {
         CategoryDto categoryDto = createCategoryDto("Техника",null);
         ResponseEntity<CategoryDto> responseEntity = testRestTemplate.postForEntity("/api/categories",categoryDto,CategoryDto.class);
         int id = responseEntity.getBody().getId();
-        ResponseEntity<String> responseEntity1 = testRestTemplate.delete("/api/categories/{categoryId}", id);
+        testRestTemplate.delete("/api/categories/{categoryId}", id);
         assertThat(responseEntity,is("{}"));
     }
 
@@ -134,7 +134,7 @@ public class AdministratorControllerIntegrTest {
        ProductDto productDto = createProductDto("Мороженное",35);
        ResponseEntity<ProductDto> responseEntity = testRestTemplate.postForEntity("/api/products",productDto,ProductDto.class);
        int id = responseEntity.getBody().getId();
-       ResponseEntity<String> responseEntity1 = testRestTemplate.delete("/api/products/{productId}", id);
+        testRestTemplate.delete("/api/products/{productId}", id);
        assertThat(responseEntity,is("{}"));
    }
 

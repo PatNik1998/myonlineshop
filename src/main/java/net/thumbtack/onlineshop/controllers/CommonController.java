@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -29,8 +30,13 @@ public class CommonController {
     }
 
     @PostMapping(value = "sessions")
-    public UserDTO login(@RequestBody UserDTO dto) {
-        return userService.login(dto);
+    public UserDTO login(@RequestBody UserDTO dto, HttpServletResponse response) {
+
+        UserDTO response1 =  userService.login(dto);
+        Cookie cookie = new Cookie("JAVASESSIONID", UUID.randomUUID().toString());
+        sessions.addSession(cookie.getValue(), response1.getId());
+        sessions.addTokens(response1.getId(),cookie);
+        return response1;
 
     }
 

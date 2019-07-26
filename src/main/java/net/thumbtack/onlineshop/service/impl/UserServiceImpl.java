@@ -1,6 +1,7 @@
 package net.thumbtack.onlineshop.service.impl;
 
 import net.thumbtack.onlineshop.common.Validator;
+import net.thumbtack.onlineshop.dao.UserDao;
 import net.thumbtack.onlineshop.dao.implementations.ProductDaoImpl;
 import net.thumbtack.onlineshop.dao.implementations.UserDaoImpl;
 import net.thumbtack.onlineshop.dao.ProductDao;
@@ -22,7 +23,7 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl implements UserService {
     private ProductDao productDao;
-    private UserDaoImpl userDao;
+    private UserDao userDao;
     private Validator validator;
     private Sessions sessions;
 
@@ -42,28 +43,24 @@ public class UserServiceImpl implements UserService {
             validator.clearField(userDTO);
             return userDTO;
         }
-        Cookie cookie = new Cookie("JAVASESSIONID", UUID.randomUUID().toString());
-        sessions.addSession(cookie.getValue(), user);
-        sessions.addTokens(user.getId(),cookie);
-
         return getDTO(user);
     }
 
     @Override
     public UserDTO logout(String sessionId) {
-        if (sessionId == null || sessionId.isEmpty() || sessions.getUser(sessionId) == null) {
+        if (sessionId == null || sessionId.isEmpty()) {
             UserDTO dto = new UserDTO();
             dto.addError(new UserServiceError(UserErrorCode.INVALID_SESSION, "Невалидная сессия", "cookie"));
             return dto;
         }
         sessions.removeSession(sessionId);
-        sessions.removeTokens(sessions.getUser(sessionId).getId());
         return new UserDTO();
     }
 
     @Override
     public UserDTO getUser(String sessionId) {
-        User user = sessions.getUser(sessionId);
+        Integer id = sessions.getId(sessionId);
+        User user = userDao.getUserById(id);
         UserDTO userDTO = new UserDTO();
         if (user == null) {
             userDTO.addError(new UserServiceError(UserErrorCode.INVALID_SESSION, "Невалидная сессия", "cookie"));

@@ -33,7 +33,7 @@ public class ClientControllerIntegerTest {
     private TestRestTemplate testRestTemplate;
     private DbService dbService;
     private Sessions sessions;
-    private ProductDao productDao
+    private ProductDao productDao;
 
     @Autowired
     public ClientControllerIntegerTest(TestRestTemplate testRestTemplate, DbService dbService, Sessions sessions, ProductDaoImpl productDao){

@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import sun.nio.cs.US_ASCII;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
+@RequestMapping("/api")
 public class ClientController {
     private ClientService clientService;
     private Sessions sessions;
@@ -31,8 +34,13 @@ public class ClientController {
 
 //  @CookieValue(value = "JAVASESSIONID", required = false) Cookie cookieName, HttpServletResponse response
     @PostMapping(value = "/clients")
-    public UserDTO registerClient(@RequestBody(required = false) UserDTO dto) {
-        return clientService.registerClient(dto);
+    public UserDTO registerClient(@RequestBody(required = false) UserDTO dto, HttpServletResponse response) {
+        UserDTO response1 = clientService.registerClient(dto);
+        Cookie cookie = new Cookie("JAVASESSIONID",UUID.randomUUID().toString());
+        response.addCookie(cookie);
+        System.out.println(" asd "+response1.getId());
+        sessions.addSession(cookie.getValue(),response1.getId());
+        return response1;
     }
 
     @PutMapping(value = "/clients")
@@ -43,15 +51,16 @@ public class ClientController {
 
     @PutMapping(value = "/deposits")
     public UserDTO deposit(@RequestBody UserDTO dto, @CookieValue(value = "JAVASESSIONID", required = false) Cookie cookie){
-        UserDTO response = clientService.addDeposit(cookie.getValue(),dto);
-        return response;
+      //  UserDTO response = clientService.addDeposit(cookie.getValue(),dto);
+      //  return response;
+        return null;
     }
 
-    @GetMapping(value = "/deposits")
-    public UserDTO getDeposit(@CookieValue(value = "JAVASESSIONID", required = false) Cookie cookie){
-        User user = sessions.getUser(cookie.getValue());
-        return clientService.getDeposit((Client) user);
-    }
+//    @GetMapping(value = "/deposits")
+//    public UserDTO getDeposit(@CookieValue(value = "JAVASESSIONID", required = false) Cookie cookie){
+//        User user = sessions.getUser(cookie.getValue());
+//        return clientService.getDeposit((Client) user);
+//    }
 
     @PostMapping(value = "/purchases")
     public ProductDto buyProduct(@CookieValue(value = "JAVASESSIONID", required = false) Cookie cookie, @RequestBody ProductDto productDto){
@@ -71,7 +80,7 @@ public class ClientController {
     return cartService.editProductFromCart((Client) user,productDto);
     }
 
-    @PostMapping(value = "/baskets")
+    @GetMapping(value = "/baskets")
     public List<ProductDto> getCart(@CookieValue(value = "JAVASESSIONID", required = false) Cookie cookie){
        User user = sessions.getUser(cookie.getValue());
         return cartService.getCart((Client) user);

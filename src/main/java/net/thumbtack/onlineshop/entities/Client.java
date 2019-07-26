@@ -12,9 +12,12 @@ import java.util.Optional;
 public class Client extends User implements Serializable {
     private String email;
     private String address;
-    private String phone;
+    private String phone;.
     private int deposit;
     private List<Item> cart;
+
+    private List<Orders> orders;
+
     public Client() {
 
     }
@@ -26,6 +29,16 @@ public class Client extends User implements Serializable {
         this.phone = phone;
         this.deposit = deposit;
         cart = new ArrayList<Item>();
+        orders = new ArrayList<Orders>();
+    }
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    public List<Orders> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Orders> orders) {
+        this.orders = orders;
     }
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

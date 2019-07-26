@@ -41,9 +41,6 @@ public class AdministratorServiceImpl implements AdministratorService {
             admin.setPassword(dto.getPassword());
             admin.setPosition(dto.getPosition());
             adminDao.add(admin);
-            Cookie cookie = new Cookie("JAVASESSIONID", UUID.randomUUID().toString());
-            sessions.addSession(cookie.getValue(), admin);
-            sessions.addTokens(admin.getId(),cookie);
             dto.setId(admin.getId());
             dto.setPassword(null);
             dto.setLogin(null);

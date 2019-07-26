@@ -43,4 +43,11 @@ public class Administrator extends User implements Serializable {
     public int hashCode() {
         return position.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "Administrator{" +
+                "position='" + position + '\'' +
+                '}';
+    }
 }

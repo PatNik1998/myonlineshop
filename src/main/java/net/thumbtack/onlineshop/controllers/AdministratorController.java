@@ -3,6 +3,7 @@ package net.thumbtack.onlineshop.controllers;
 import net.thumbtack.onlineshop.dto.CategoryDto;
 import net.thumbtack.onlineshop.dto.ProductDto;
 import net.thumbtack.onlineshop.dto.UserDTO;
+import net.thumbtack.onlineshop.entities.User;
 import net.thumbtack.onlineshop.service.*;
 import net.thumbtack.onlineshop.service.impl.AdministratorServiceImpl;
 import net.thumbtack.onlineshop.service.impl.CategoryServiceImpl;
@@ -13,7 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -23,22 +26,27 @@ public class AdministratorController {
     private CategoryService categoryService;
     private ProductService productService;
     private Sessions sessions;
+    private UserService userService;
 
     @Autowired
-    public AdministratorController(AdministratorServiceImpl adminService, ClientServiceImpl clientService, CategoryServiceImpl categoryService, ProductServiceImpl productService, Sessions sessions ) {
+    public AdministratorController(AdministratorServiceImpl adminService, ClientServiceImpl clientService, CategoryServiceImpl categoryService, ProductServiceImpl productService, Sessions sessions, UserService userService ) {
         this.adminService = adminService;
         this.clientService = clientService;
         this.categoryService = categoryService;
         this.productService = productService;
         this.sessions = sessions;
+        this.userService = userService;
     }
 
 
     @PostMapping(value = "/admins",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserDTO registerAdmin(@RequestBody UserDTO dto) {
-        UserDTO response = adminService.registerAdmin(dto);
-        return response;
+    public UserDTO registerAdmin(@RequestBody UserDTO dto, HttpServletResponse response) {
+        UserDTO response1 = adminService.registerAdmin(dto);
+        Cookie cookie = new Cookie("JAVASESSIONID",UUID.randomUUID().toString());
+        response.addCookie(cookie);
+        sessions.addSession(cookie.getValue(),response1.getId());
+        return response1;
     }
 
     @GetMapping(value = "/clients")
@@ -50,7 +58,7 @@ public class AdministratorController {
 
     @PutMapping(value = "/admins")
     public UserDTO editAdmin(@RequestBody UserDTO dto,@RequestHeader @CookieValue(value = "JAVASESSIONID", required = false) Cookie cookie) {
-        UserDTO response = adminService.editAdminProfile(dto.getCookie().getValue(), dto);
+        UserDTO response = adminService.editAdminProfile(cookie.getValue(), dto);
         return response;
 
 
