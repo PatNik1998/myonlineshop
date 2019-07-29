@@ -12,7 +12,7 @@ import java.util.Optional;
 public class Client extends User implements Serializable {
     private String email;
     private String address;
-    private String phone;.
+    private String phone;
     private int deposit;
     private List<Item> cart;
 

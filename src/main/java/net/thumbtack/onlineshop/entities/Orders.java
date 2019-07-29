@@ -7,7 +7,7 @@ import java.util.List;
 @Entity
 @Table
 public class Orders implements Serializable {
-   @Id
+    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private int id;
 
@@ -17,6 +17,10 @@ public class Orders implements Serializable {
     private Date date;
    @Column(nullable = false)
     private double sum;
+
+    public int getId() {
+        return id;
+    }
 
     public List<Item> getItems() {
         return items;

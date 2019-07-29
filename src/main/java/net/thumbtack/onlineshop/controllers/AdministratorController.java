@@ -1,8 +1,6 @@
 package net.thumbtack.onlineshop.controllers;
 
-import net.thumbtack.onlineshop.dto.CategoryDto;
-import net.thumbtack.onlineshop.dto.ProductDto;
-import net.thumbtack.onlineshop.dto.UserDTO;
+import net.thumbtack.onlineshop.dto.*;
 import net.thumbtack.onlineshop.entities.User;
 import net.thumbtack.onlineshop.service.*;
 import net.thumbtack.onlineshop.service.impl.AdministratorServiceImpl;
@@ -101,6 +99,78 @@ public class AdministratorController {
     @PostMapping(value = "/products")
     public ProductDto addProduct(@RequestBody ProductDto productDto, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
         return productService.addProduct(productDto);
+    }
+
+    @GetMapping(value = "/userOrders/")
+    public OrdersListDTOWithTotal getOrdersByClient(@RequestParam(name = "clientId") Integer clientId, @RequestParam(name = "page") Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
+        User u = sessions.getUser(cookie.getValue());
+        if(u != null){//TODO: проверка на админа
+            return adminService.getOrdersListByClient(clientId, page);
+        }
+        return new OrdersListDTOWithTotal();
+    }
+
+    @GetMapping(value = "/productOrders/")
+    public OrdersListDTOWithTotal getOrdersByProduct(@RequestParam(name = "productId") Integer productId, @RequestParam(name = "page") Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
+        User u = sessions.getUser(cookie.getValue());
+        if(u != null){//TODO: проверка на админа
+            return adminService.getOrdersListByProduct(productId, page);
+        }
+        return new OrdersListDTOWithTotal();
+    }
+
+    @GetMapping(value = "/topCategorySales/")
+    public TopSalesDto getTopCategorySales(@RequestParam(name = "categoryId") Integer categoryId, @RequestParam(name = "count") Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
+        User u = sessions.getUser(cookie.getValue());
+        if(u != null){//TODO: проверка на админа
+            return adminService.getTopCategorySales(categoryId, count);
+        }
+        return new TopSalesDto();
+    }
+
+    @GetMapping(value = "/monthlyTopSales/")
+    public TopSalesDto getMonthlyTopSales(@RequestParam(name = "count") Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
+        User u = sessions.getUser(cookie.getValue());
+        if(u != null){//TODO: проверка на админа
+            return adminService.getMonthlyTopSales(count);
+        }
+        return new TopSalesDto();
+    }
+
+    @GetMapping(value = "/yearlyTopSales/")
+    public TopSalesDto getYearlyTopSales(@RequestParam(name = "count") Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
+        User u = sessions.getUser(cookie.getValue());
+        if(u != null){//TODO: проверка на админа
+            return adminService.getYearlyTopSales(count);
+        }
+        return new TopSalesDto();
+    }
+
+    @GetMapping(value = "/topClientCategories/")
+    public CategoriesListDto getTopClientCategories(@RequestParam(name = "clientId") Integer clientId, @RequestParam(name = "count") Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie) {
+        User u = sessions.getUser(cookie.getValue());
+        if(u != null){//TODO: проверка на админа
+            return adminService.getTopClientCategories(clientId,count);
+        }
+        return new CategoriesListDto();
+    }
+
+    @GetMapping(value = "/ordersList/")
+    public OrdersListDTOWithTotal getOrderList(@RequestParam(name = "page") Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
+        User u = sessions.getUser(cookie.getValue());
+        if(u != null){//TODO: проверка на админа
+            return adminService.getOrderList(page);
+        }
+        return new OrdersListDTOWithTotal();
+    }
+
+    @GetMapping(value = "/topOrdersByDates/")
+    public OrdersListDTOWithTotal getTopOrdersByDate(@RequestParam(name = "page") Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
+        User u = sessions.getUser(cookie.getValue());
+        if(u != null){//TODO: проверка на админа
+            return adminService.getTopOrdersByDate(page);
+        }
+        return new OrdersListDTOWithTotal();
     }
 
 }

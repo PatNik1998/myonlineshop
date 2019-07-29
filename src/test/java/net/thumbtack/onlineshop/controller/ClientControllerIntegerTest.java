@@ -5,22 +5,16 @@ import net.thumbtack.onlineshop.dao.implementations.ProductDaoImpl;
 import net.thumbtack.onlineshop.dto.ProductDto;
 import net.thumbtack.onlineshop.dto.UserDTO;
 import net.thumbtack.onlineshop.entities.Product;
-import net.thumbtack.onlineshop.entities.User;
-import net.thumbtack.onlineshop.service.DbService;
-import net.thumbtack.onlineshop.service.Sessions;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 

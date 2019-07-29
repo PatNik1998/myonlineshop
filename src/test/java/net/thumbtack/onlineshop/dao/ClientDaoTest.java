@@ -28,12 +28,12 @@ public class ClientDaoTest {
 
     @Test
     public void testInsertDbToDb() {
-        Client client = new Client("Artem", "Karelov", null, "karelov@thumbtack.net", "Saratov", "100000", "karelov", "q1w2e3r4t5y6", 999999999);
+        Client client = new Client("Никита", "Патраков", null, "patnik@thumbtack.net", "Saratov", "100000", "patnik", "q1w2e3r4t5y6", 99999999);
         clientDao.add(client);
         Client clientFromDb = clientDao.getById(client.getId());
         MatcherAssert.assertThat(client, is(clientFromDb));
 
-        client = new Client("Artem", "Karelov", null, "karelov@thumbtack.net", "Saratov", "1000001", "karelov2.0", "q1w2e3r4t5y6", 999999999);
+        client = new Client("Ваня", "Иванов", null, "vano@thumbtack.net", "Saratov", "1000001", "vano", "q1w2e3r4t5y6", 999999999);
         clientDao.add(client);
         clientFromDb = clientDao.getById(client.getId());
         MatcherAssert.assertThat(client, is(clientFromDb));
@@ -43,12 +43,13 @@ public class ClientDaoTest {
     public void testGetAllClients() {
         List<Client> expectedClients = new ArrayList<Client>();
 
-        Client client = new Client("Artem", "Karelov", null,"karelov@thumbtack.net","Saratov", "100000",   "karelov", "q1w2e3r4t5y6",999999999);
+        Client client = new Client("Никита", "Патраков", null, "patnik@thumbtack.net", "Saratov", "100000", "patnik", "q1w2e3r4t5y6", 99999999);
         clientDao.add(client);
         expectedClients.add(client);
         Assert.assertSame(1, clientDao.getAll().size());
 
-        client = new Client("Artem", "Karelov", null,"karelov@thumbtack.net","Saratov", "1000001",   "karelov2.0", "q1w2e3r4t5y6",999999999);
+        client = new Client("Ваня", "Иванов", null, "vano@thumbtack.net", "Saratov", "1000001", "vano", "q1w2e3r4t5y6", 999999999);
+
         clientDao.add(client);
         expectedClients.add(client);
         List<Client> clients = clientDao.getAll();
@@ -58,7 +59,7 @@ public class ClientDaoTest {
 
     @Test
     public void testDeleteClientFromDb() {
-        Client client = new Client("Artem", "Karelov", null,"karelov@thumbtack.net","Saratov", "100000",   "karelov", "q1w2e3r4t5y6",999999999);
+       Client client = new Client("Ваня", "Иванов", null, "vano@thumbtack.net", "Saratov", "1000001", "vano", "q1w2e3r4t5y6", 999999999);
         clientDao.add(client);
         Client clientFromDb = clientDao.getById(client.getId());
         Assert.assertEquals(client, clientFromDb);
@@ -69,7 +70,7 @@ public class ClientDaoTest {
 
     @Test
     public void testEditClient() {
-        Client client = new Client("Artem", "Karelov", null,"karelov@thumbtack.net","Saratov", "100000",   "karelov", "q1w2e3r4t5y6",999999999);
+       Client client = new Client("Ваня", "Иванов", null, "vano@thumbtack.net", "Saratov", "1000001", "vano", "q1w2e3r4t5y6", 999999999);
         clientDao.add(client);
         Client clientFromDb = clientDao.getById(client.getId());
         String phone = "98656782";
@@ -84,12 +85,7 @@ public class ClientDaoTest {
         Assert.assertEquals(phone, clientFromDb.getPhone());
     }
 
-   // @Test
-//    public void testCartOfClient() {
-//        Client client = new Client("Artem", "Karelov", null,"karelov@thumbtack.net","Saratov", "100000",   "karelov", "q1w2e3r4t5y6",999999999);
-//        Product product = new Product(-1 , 750, "vodka(40%)", 100, null);
-//        Product product1 = new Product(-1 , 750, "limonad", 100, null);
-//
+   //
 //        productDao.add(product);
 //        productDao.add(product1);
 //
