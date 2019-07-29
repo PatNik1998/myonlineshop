@@ -104,7 +104,7 @@ public class AdministratorController {
     @GetMapping(value = "/userOrders/")
     public OrdersListDTOWithTotal getOrdersByClient(@RequestParam(name = "clientId") Integer clientId, @RequestParam(name = "page") Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
         User u = sessions.getUser(cookie.getValue());
-        if(u != null){//TODO: проверка на админа
+        if(u != null){//
             return adminService.getOrdersListByClient(clientId, page);
         }
         return new OrdersListDTOWithTotal();
@@ -113,7 +113,7 @@ public class AdministratorController {
     @GetMapping(value = "/productOrders/")
     public OrdersListDTOWithTotal getOrdersByProduct(@RequestParam(name = "productId") Integer productId, @RequestParam(name = "page") Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
         User u = sessions.getUser(cookie.getValue());
-        if(u != null){//TODO: проверка на админа
+        if(u != null){
             return adminService.getOrdersListByProduct(productId, page);
         }
         return new OrdersListDTOWithTotal();
@@ -122,7 +122,7 @@ public class AdministratorController {
     @GetMapping(value = "/topCategorySales/")
     public TopSalesDto getTopCategorySales(@RequestParam(name = "categoryId") Integer categoryId, @RequestParam(name = "count") Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
         User u = sessions.getUser(cookie.getValue());
-        if(u != null){//TODO: проверка на админа
+        if(u != null){
             return adminService.getTopCategorySales(categoryId, count);
         }
         return new TopSalesDto();
@@ -131,7 +131,7 @@ public class AdministratorController {
     @GetMapping(value = "/monthlyTopSales/")
     public TopSalesDto getMonthlyTopSales(@RequestParam(name = "count") Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
         User u = sessions.getUser(cookie.getValue());
-        if(u != null){//TODO: проверка на админа
+        if(u != null){
             return adminService.getMonthlyTopSales(count);
         }
         return new TopSalesDto();
@@ -140,7 +140,7 @@ public class AdministratorController {
     @GetMapping(value = "/yearlyTopSales/")
     public TopSalesDto getYearlyTopSales(@RequestParam(name = "count") Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
         User u = sessions.getUser(cookie.getValue());
-        if(u != null){//TODO: проверка на админа
+        if(u != null){
             return adminService.getYearlyTopSales(count);
         }
         return new TopSalesDto();
@@ -149,7 +149,7 @@ public class AdministratorController {
     @GetMapping(value = "/topClientCategories/")
     public CategoriesListDto getTopClientCategories(@RequestParam(name = "clientId") Integer clientId, @RequestParam(name = "count") Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie) {
         User u = sessions.getUser(cookie.getValue());
-        if(u != null){//TODO: проверка на админа
+        if(u != null){
             return adminService.getTopClientCategories(clientId,count);
         }
         return new CategoriesListDto();
@@ -158,7 +158,7 @@ public class AdministratorController {
     @GetMapping(value = "/ordersList/")
     public OrdersListDTOWithTotal getOrderList(@RequestParam(name = "page") Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
         User u = sessions.getUser(cookie.getValue());
-        if(u != null){//TODO: проверка на админа
+        if(u != null){
             return adminService.getOrderList(page);
         }
         return new OrdersListDTOWithTotal();
@@ -167,7 +167,7 @@ public class AdministratorController {
     @GetMapping(value = "/topOrdersByDates/")
     public OrdersListDTOWithTotal getTopOrdersByDate(@RequestParam(name = "page") Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
         User u = sessions.getUser(cookie.getValue());
-        if(u != null){//TODO: проверка на админа
+        if(u != null){
             return adminService.getTopOrdersByDate(page);
         }
         return new OrdersListDTOWithTotal();
