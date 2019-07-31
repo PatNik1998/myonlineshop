@@ -85,52 +85,5 @@ public class ClientDaoTest {
         Assert.assertEquals(phone, clientFromDb.getPhone());
     }
 
-   //
-//        productDao.add(product);
-//        productDao.add(product1);
-//
-//        client.addItem(product);
-//        Assert.assertEquals(1, client.getItems().size());
-//
-//        client.addItem(product);
-//        client.addItem(product);
-//        Assert.assertEquals(1, client.getItems().size());
-//        Assert.assertEquals(3, client.getItems().get(0).getAmount());
-//
-//        client.deleteItem(product);
-//        Assert.assertEquals(1, client.getItems().size());
-//        Assert.assertEquals(2, client.getItems().get(0).getAmount());
-//
-//        MatcherAssert.assertThat(client.getItems().get(0).getProduct(), is(product));
-//
-//        client.addItem(product1);
-//        client.addItem(product1);
-//        Assert.assertEquals(2, client.getItems().get(0).getAmount());
-//        clientDao.add(client);
-//
-//        int id = client.getId();
-//        client = clientDao.getById(id);
-//        Assert.assertEquals(2, client.getItems().size());
-//        Assert.assertEquals(2, client.getItems().get(0).getAmount());
-//
-//        List<Product> products = new ArrayList<Product>();
-//        products.add(product);
-//        products.add(product1);
-//        List<Product> productsOfUserFromDb = new ArrayList<Product>();
-//        for (Item item : client.getItems()) {
-//            productsOfUserFromDb.add(item.getProduct());
-//        }
-//        MatcherAssert.assertThat(productsOfUserFromDb, is(products));
-//
-//        Product productForDelete = productDao.getById(product1.getIdProduct());
-//        client.deleteItem(productForDelete);
-//        client.deleteItem(productForDelete);
-//
-//        clientDao.update(client);
-//
-//        id = client.getId();
-//        client = clientDao.getById(id);
-//        Assert.assertEquals(1, client.getItems().size());
-//    }
 
 }
