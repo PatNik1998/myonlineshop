@@ -7,7 +7,7 @@ import net.thumbtack.onlineshop.dto.ProductDto;
 import net.thumbtack.onlineshop.entities.Client;
 import net.thumbtack.onlineshop.entities.Item;
 import net.thumbtack.onlineshop.entities.Product;
-import net.thumbtack.onlineshop.service.interfaces.CartService;
+import net.thumbtack.onlineshop.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

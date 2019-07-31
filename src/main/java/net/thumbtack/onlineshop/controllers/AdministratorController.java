@@ -1,7 +1,10 @@
 package net.thumbtack.onlineshop.controllers;
 
 import net.thumbtack.onlineshop.dto.*;
+import net.thumbtack.onlineshop.entities.Administrator;
 import net.thumbtack.onlineshop.entities.User;
+import net.thumbtack.onlineshop.errors.UserErrorCode;
+import net.thumbtack.onlineshop.errors.UserServiceError;
 import net.thumbtack.onlineshop.service.*;
 import net.thumbtack.onlineshop.service.impl.AdministratorServiceImpl;
 import net.thumbtack.onlineshop.service.impl.CategoryServiceImpl;
@@ -41,9 +44,12 @@ public class AdministratorController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO registerAdmin(@RequestBody UserDTO dto, HttpServletResponse response) {
         UserDTO response1 = adminService.registerAdmin(dto);
-        Cookie cookie = new Cookie("JAVASESSIONID",UUID.randomUUID().toString());
-        response.addCookie(cookie);
-        sessions.addSession(cookie.getValue(),response1.getId());
+        if(response1.getErrors().size() ==0){
+            Cookie cookie = new Cookie("JAVASESSIONID",UUID.randomUUID().toString());
+            sessions.addSession(cookie.getValue(),response1.getId());
+            sessions.addTokens(response1.getId(),cookie);
+            response.addCookie(cookie);
+        }
         return response1;
     }
 
@@ -55,7 +61,7 @@ public class AdministratorController {
     }
 
     @PutMapping(value = "/admins")
-    public UserDTO editAdmin(@RequestBody UserDTO dto,@RequestHeader @CookieValue(value = "JAVASESSIONID", required = false) Cookie cookie) {
+    public UserDTO editAdmin(@RequestBody UserDTO dto, @CookieValue(value = "JAVASESSIONID", required = false) Cookie cookie) {
         UserDTO response = adminService.editAdminProfile(cookie.getValue(), dto);
         return response;
 
@@ -77,7 +83,7 @@ public class AdministratorController {
 
     @PutMapping(value = "/categories/{categoryId}")
     public CategoryDto editCategory(@PathVariable int categoryId,@RequestBody CategoryDto categoryDto, @CookieValue(value = "JAVASESSIONID")Cookie cookie ){
-        return categoryService.addCategory(categoryDto);
+        return categoryService.editCategory(categoryId,categoryDto);
 
     }
 
@@ -97,80 +103,104 @@ public class AdministratorController {
     }
 
     @PostMapping(value = "/products")
-    public ProductDto addProduct(@RequestBody ProductDto productDto, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
+    public ProductDTOWithIdCategories addProduct(@RequestBody ProductDTOWithIdCategories productDto, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
         return productService.addProduct(productDto);
     }
 
-    @GetMapping(value = "/userOrders/")
-    public OrdersListDTOWithTotal getOrdersByClient(@RequestParam(name = "clientId") Integer clientId, @RequestParam(name = "page") Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
-        User u = sessions.getUser(cookie.getValue());
+    @GetMapping(value = "/userOrders/{clientId}/{page}")
+    public OrdersListDTOWithTotal getOrdersByClient(@PathVariable Integer clientId, @PathVariable Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
+        Administrator u = (Administrator) sessions.getUser(cookie.getValue());
         if(u != null){//
             return adminService.getOrdersListByClient(clientId, page);
+        }else{
+            OrdersListDTOWithTotal list = new OrdersListDTOWithTotal();
+            list.addError(new UserServiceError(UserErrorCode.INVALID_SESSION, "Wrong login or session!", "user"));
+            return list;
         }
-        return new OrdersListDTOWithTotal();
     }
 
-    @GetMapping(value = "/productOrders/")
-    public OrdersListDTOWithTotal getOrdersByProduct(@RequestParam(name = "productId") Integer productId, @RequestParam(name = "page") Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
-        User u = sessions.getUser(cookie.getValue());
-        if(u != null){
+    @GetMapping(value = "/productOrders/{productId}/{page}")
+    public OrdersListDTOWithTotal getOrdersByProduct(@PathVariable Integer productId, @PathVariable Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
+        Administrator u = (Administrator) sessions.getUser(cookie.getValue());
+        if(u!=null){
             return adminService.getOrdersListByProduct(productId, page);
+        }else{
+            OrdersListDTOWithTotal list = new OrdersListDTOWithTotal();
+            list.addError(new UserServiceError(UserErrorCode.INVALID_SESSION, "Wrong login or session!", "user"));
+            return list;
         }
-        return new OrdersListDTOWithTotal();
     }
 
-    @GetMapping(value = "/topCategorySales/")
-    public TopSalesDto getTopCategorySales(@RequestParam(name = "categoryId") Integer categoryId, @RequestParam(name = "count") Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
-        User u = sessions.getUser(cookie.getValue());
-        if(u != null){
+    @GetMapping(value = "/topCategorySales/{categoryId}/{count}")
+    public TopSalesDto getTopCategorySales(@PathVariable Integer categoryId, @PathVariable Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
+        Administrator u = (Administrator) sessions.getUser(cookie.getValue());
+        if(u!=null){
             return adminService.getTopCategorySales(categoryId, count);
+        }else {
+            TopSalesDto list = new TopSalesDto();
+            list.addError(new UserServiceError(UserErrorCode.INVALID_SESSION, "Wrong login or session!", "user"));
+            return list;
         }
-        return new TopSalesDto();
     }
 
-    @GetMapping(value = "/monthlyTopSales/")
-    public TopSalesDto getMonthlyTopSales(@RequestParam(name = "count") Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
-        User u = sessions.getUser(cookie.getValue());
+    @GetMapping(value = "/monthlyTopSales/{count}")
+    public TopSalesDto getMonthlyTopSales(@PathVariable  Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
+        Administrator u = (Administrator) sessions.getUser(cookie.getValue());
         if(u != null){
             return adminService.getMonthlyTopSales(count);
+        }else {
+            TopSalesDto list = new TopSalesDto();
+            list.addError(new UserServiceError(UserErrorCode.INVALID_SESSION, "Wrong login or session!", "user"));
+            return list;
         }
-        return new TopSalesDto();
     }
 
-    @GetMapping(value = "/yearlyTopSales/")
-    public TopSalesDto getYearlyTopSales(@RequestParam(name = "count") Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
-        User u = sessions.getUser(cookie.getValue());
+    @GetMapping(value = "/yearlyTopSales/{count}")
+    public TopSalesDto getYearlyTopSales(@PathVariable Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
+        Administrator u = (Administrator) sessions.getUser(cookie.getValue());
         if(u != null){
             return adminService.getYearlyTopSales(count);
+        }else {
+            TopSalesDto list = new TopSalesDto();
+            list.addError(new UserServiceError(UserErrorCode.INVALID_SESSION, "Wrong login or session!", "user"));
+            return list;
         }
-        return new TopSalesDto();
     }
 
-    @GetMapping(value = "/topClientCategories/")
-    public CategoriesListDto getTopClientCategories(@RequestParam(name = "clientId") Integer clientId, @RequestParam(name = "count") Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie) {
-        User u = sessions.getUser(cookie.getValue());
+    @GetMapping(value = "/topClientCategories/{clientId}/{count}")
+    public CategoriesListDto getTopClientCategories(@PathVariable Integer clientId, @PathVariable Integer count, @CookieValue(value = "JAVASESSIONID") Cookie cookie) {
+        Administrator u = (Administrator) sessions.getUser(cookie.getValue());
         if(u != null){
             return adminService.getTopClientCategories(clientId,count);
+        }else{
+            CategoriesListDto list = new CategoriesListDto();
+            list.addError(new UserServiceError(UserErrorCode.INVALID_SESSION, "Wrong login or session!", "user"));
+            return list;
         }
-        return new CategoriesListDto();
     }
 
-    @GetMapping(value = "/ordersList/")
-    public OrdersListDTOWithTotal getOrderList(@RequestParam(name = "page") Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
-        User u = sessions.getUser(cookie.getValue());
+    @GetMapping(value = "/ordersList/{page}")
+    public OrdersListDTOWithTotal getOrderList(@PathVariable Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
+        Administrator u = (Administrator) sessions.getUser(cookie.getValue());
         if(u != null){
             return adminService.getOrderList(page);
+        }else{
+            OrdersListDTOWithTotal list = new OrdersListDTOWithTotal();
+            list.addError(new UserServiceError(UserErrorCode.INVALID_SESSION, "Wrong login or session!", "user"));
+            return list;
         }
-        return new OrdersListDTOWithTotal();
     }
 
-    @GetMapping(value = "/topOrdersByDates/")
-    public OrdersListDTOWithTotal getTopOrdersByDate(@RequestParam(name = "page") Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
-        User u = sessions.getUser(cookie.getValue());
-        if(u != null){
+    @GetMapping(value = "/topOrdersByDates/{page}")
+    public OrdersListDTOWithTotal getTopOrdersByDate(@PathVariable Integer page, @CookieValue(value = "JAVASESSIONID") Cookie cookie){
+        Administrator u = (Administrator) sessions.getUser(cookie.getValue());
+        if(true){//u != null){
             return adminService.getTopOrdersByDate(page);
+        }else{
+            OrdersListDTOWithTotal list = new OrdersListDTOWithTotal();
+            list.addError(new UserServiceError(UserErrorCode.INVALID_SESSION, "Wrong login or session!", "user"));
+            return list;
         }
-        return new OrdersListDTOWithTotal();
     }
 
 }

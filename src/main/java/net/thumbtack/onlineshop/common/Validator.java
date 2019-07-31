@@ -28,6 +28,7 @@ public class Validator {
             validateLogin(userDto);
             validatePassword(userDto);
             validatePosition(userDto);
+            validatePhone(userDto);
             if(!userDto.getErrors().isEmpty()){
                 clearField(userDto);
             }
@@ -41,6 +42,7 @@ public class Validator {
             validateAddress(userDto);
             validateLogin(userDto);
             validatePassword(userDto);
+            validatePhone(userDto);
             if(!userDto.getErrors().isEmpty()){
                 clearField(userDto);
             }
@@ -53,6 +55,7 @@ public class Validator {
             validatePatronymic(userDto);
             validateNewPassword(userDto);
             validatePosition(userDto);
+            validatePhone(userDto);
             if(!userDto.getErrors().isEmpty()){
                 clearField(userDto);
             }
@@ -66,6 +69,7 @@ public class Validator {
             validateNewPassword(userDto);
             validateEmail(userDto);
             validateAddress(userDto);
+            validatePhone(userDto);
             if(!userDto.getErrors().isEmpty()){
                 clearField(userDto);
             }
@@ -196,6 +200,15 @@ public class Validator {
                 userDto.getErrors().add(new UserServiceError(UserErrorCode.INVALID_EMAIL, "Почта должна быть типа XXXX@XXX.XXX, где X-любое количество символов", "email"));
             }
         }
+        public void validatePhone(UserDTO userDto){
+            String regexForPhone = "\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}";
+            Pattern pattern = Pattern.compile(regexForPhone);
+            Matcher matcher = pattern.matcher(userDto.getPhone());
+            if (!matcher.matches()) {
+                userDto.getErrors().add(new UserServiceError(UserErrorCode.INVALID_PHONE, "Почта должна быть типа XXXXXXXXXX, XXX-XXX-XXXX, (XXX)XXX-XXXX , где X это числа", "phone"));
+            }
+        }
+
 
 
 

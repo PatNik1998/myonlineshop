@@ -23,7 +23,7 @@ public class ClientDaoTest {
     @Before
     public void clear() {
         clientDao.clear();
-        productDao.clear();
+       // productDao.clear();
     }
 
     @Test

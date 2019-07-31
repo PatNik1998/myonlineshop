@@ -10,6 +10,7 @@ import net.thumbtack.onlineshop.dao.ProductDao;
 
 import net.thumbtack.onlineshop.dto.ProductDTOWithNameCategories;
 import net.thumbtack.onlineshop.dto.UserDTO;
+import net.thumbtack.onlineshop.entities.Administrator;
 import net.thumbtack.onlineshop.entities.Client;
 import net.thumbtack.onlineshop.errors.UserErrorCode;
 import net.thumbtack.onlineshop.errors.UserServiceError;
@@ -58,11 +59,17 @@ public class ClientServiceImpl implements ClientService {
             dto.setId(client.getId());
             dto.setPassword(null);
             dto.setLogin(null);
+            dto.setDeposit(0);
             return dto;
         }
         return dto;
     }
     public List<UserDTO> getClients(String sessionId) {
+        Administrator admin = (Administrator) sessions.getUser(sessionId);
+        if(admin == null){
+            //userDTO.addError(new UserServiceError(UserErrorCode.INVALID_SESSION, "Wrong login or session!", "client"));
+            return null;//TODO: сделать бы тут дто чтоб ошибку вставить
+        }
         List<UserDTO> result = new ArrayList<>();
         List<Client> clients = clientDao.getAll();
         for (Client client : clients) {
@@ -76,6 +83,10 @@ public class ClientServiceImpl implements ClientService {
 
     public UserDTO editClientProfile(String sessionId, UserDTO userDTO) {
         Client client = (Client) sessions.getUser(sessionId);
+        if(client == null){
+            userDTO.addError(new UserServiceError(UserErrorCode.INVALID_SESSION, "Wrong login or session!", "client"));
+            return userDTO;
+        }
         validator.editClientValidate(userDTO);
         if(userDTO.getErrors().isEmpty()){
             client.setPassword(userDTO.getNewPassword());
@@ -89,6 +100,7 @@ public class ClientServiceImpl implements ClientService {
 
             userDTO.setNewPassword(null);
             userDTO.setOldPassword(null);
+
             return  userDTO;
         }
         return userDTO;
@@ -96,17 +108,35 @@ public class ClientServiceImpl implements ClientService {
 
 
 
-    public UserDTO addDeposit(Client client, UserDTO userDTO) {
-     int numberDeposit  = userDTO.getDeposit();
-     client.setDeposit(client.getDeposit() + numberDeposit);
-     clientDao.update(client);
-    // UserDTO result = new UserDTO(client);
-     return null;
+    public UserDTO addDeposit(String sessionId, UserDTO userDTO) {
+        Client client = (Client) sessions.getUser(sessionId);
+        if(client == null){
+            userDTO.addError(new UserServiceError(UserErrorCode.INVALID_SESSION, "Wrong login or session!", "client"));
+            return userDTO;
+        }
+        int numberDeposit  = userDTO.getDeposit();
+        client.setDeposit(client.getDeposit() + numberDeposit);
+        clientDao.update(client);
+        userDTO.setDeposit(client.getDeposit());
+        userDTO.setFirstName(client.getFirstName());
+        userDTO.setLastName(client.getLastName());
+        userDTO.setPatronymic(client.getPatronymic());
+        userDTO.setEmail(client.getEmail());
+        userDTO.setAddress(client.getAddress());
+        userDTO.setPhone(client.getPhone());
+        return  userDTO;
 }
 
-   // public UserDTO getDeposit(Client client) {
-      //  return new UserDTO(client);
-   // }
+    public UserDTO getDeposit(String sessionId) {
+        Client client = (Client) sessions.getUser(sessionId);
+        UserDTO userDTO = new UserDTO();
+        if(client == null){
+            userDTO.addError(new UserServiceError(UserErrorCode.INVALID_SESSION, "Wrong login or session!", "client"));
+            return userDTO;
+        }
+        validator.setFieldOfClientForJson(client,userDTO);
+        return userDTO;
+    }
 
 
 

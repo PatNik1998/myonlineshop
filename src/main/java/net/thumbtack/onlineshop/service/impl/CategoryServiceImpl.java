@@ -30,12 +30,24 @@ public class CategoryServiceImpl implements CategoryService {
         if (validator.validateCategory(categoryDto)) {
             Category category = new Category();
             category.setName(categoryDto.getName());
-            Category parentCategory = categoryDao.getById(categoryDto.getParentId());
+            Category parentCategory = null;
+            if(categoryDto.getParentId() !=null){
+                parentCategory = categoryDao.getById(categoryDto.getParentId());
+            }
             category.setParentCategory(parentCategory);
-            categoryDao.add(category);
+
+            if(categoryDto.getParentId() == null || parentCategory != null){
+                categoryDao.add(category);
+            }else{
+                categoryDto.addError(new UserServiceError(UserErrorCode.INVALID_CATEGORY_PARENT, "Parent category not found!", "parentCategory"));
+            }
+
 
             categoryDto.setId(category.getIdCategory());
-            categoryDto.setParentName(category.getParentCategory().getName());
+
+            if(parentCategory != null){
+                categoryDto.setParentName(category.getParentCategory().getName());
+            }
             return categoryDto;
         }
         return categoryDto;
@@ -47,7 +59,7 @@ public class CategoryServiceImpl implements CategoryService {
         CategoryDto categoryDto = new CategoryDto();
         if (category == null) {
             categoryDto.getErrors().add(new UserServiceError(UserErrorCode.CATEGORY_NOT_EXIST, "Нет такой категории", "error"));
-
+            return categoryDto;//YODO: очистить поля
         }
         categoryDto.setId(category.getIdCategory());
         categoryDto.setName(category.getName());
@@ -64,11 +76,18 @@ public class CategoryServiceImpl implements CategoryService {
         if (category == null) {
             validator.setNullForFieldsCategory(categoryDto);
             categoryDto.getErrors().add(new UserServiceError(UserErrorCode.CATEGORY_NOT_EXIST, "Нет такой категории", "error"));
+            return categoryDto;
         }
+
         String newName = categoryDto.getName();
 
         category.setName(newName);
-        Category parentCategory = categoryDao.getById(categoryDto.getParentId());
+        Category parentCategory = null;
+        if(categoryDto.getParentId() != null){
+            parentCategory = categoryDao.getById(categoryDto.getParentId());
+        }else{
+            categoryDto.setParentName(null);
+        }
         category.setParentCategory(parentCategory);
 
         categoryDao.update(category);

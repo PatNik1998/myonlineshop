@@ -5,6 +5,8 @@ import net.thumbtack.onlineshop.dao.implementations.ProductDaoImpl;
 import net.thumbtack.onlineshop.dto.ProductDto;
 import net.thumbtack.onlineshop.dto.UserDTO;
 import net.thumbtack.onlineshop.entities.Product;
+import net.thumbtack.onlineshop.service.DbService;
+import net.thumbtack.onlineshop.service.Sessions;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +38,7 @@ public class ClientControllerIntegerTest {
         this.sessions = sessions;
         this.productDao = productDao;
     }
+
 
     @After
     public void clearAfter(){
@@ -109,7 +112,7 @@ public class ClientControllerIntegerTest {
        userDTO.setLogin("patnik");
        userDTO.setPassword("1234567890");
 
-       ResponseEntity<UserDTO> responseEntity = testRestTemplate.postForEntity("/api/clients",userDTO,UserDTO.class);
+       ResponseEntity<UserDTO> responseEntity = testRestTemplate.getForEntity("/api/clients",UserDTO.class);
        userDTO.setDeposit(1000);
        UserDTO userDTO1 = testRestTemplate.getForObject("/api/deposits",UserDTO.class);
 

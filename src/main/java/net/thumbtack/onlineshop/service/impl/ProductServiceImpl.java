@@ -4,6 +4,7 @@ import net.thumbtack.onlineshop.dao.implementations.CategoryDaoImpl;
 import net.thumbtack.onlineshop.dao.implementations.ProductDaoImpl;
 import net.thumbtack.onlineshop.dao.CategoryDao;
 import net.thumbtack.onlineshop.dao.ProductDao;
+import net.thumbtack.onlineshop.dto.ProductDTOWithIdCategories;
 import net.thumbtack.onlineshop.dto.ProductDto;
 import net.thumbtack.onlineshop.entities.Category;
 import net.thumbtack.onlineshop.entities.Product;
@@ -11,6 +12,7 @@ import net.thumbtack.onlineshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Set;
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -36,22 +38,25 @@ public class ProductServiceImpl implements ProductService {
         return productDto;
     }
 
-    public ProductDto addProduct(ProductDto productDto){
+    public ProductDTOWithIdCategories addProduct(ProductDTOWithIdCategories productDto){
         Product product = new Product();
         product.setName(productDto.getName());
         product.setPrice(productDto.getPrice());
         product.setCount(productDto.getCount());
-        Set<Category> categories = productDto.getCategories();
+        int[] categories = productDto.getCategories();
+        product.setCategories(new HashSet<>());
+        for(int categoryId : categories){
 
-        for(Category category : categories){
-            Category cat = category;
-            product.addCategory(category);
+            Category cat = categoryDao.getById(categoryId);
+            product.addCategory(cat);
         }
 
         productDao.add(product);
-
+        productDto.setId(product.getIdProduct());
         return productDto;
     }
+
+
 
     public String deleteProduct(int productId){
         productDao.delete(productId);

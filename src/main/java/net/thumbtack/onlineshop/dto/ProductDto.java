@@ -17,7 +17,7 @@ public class ProductDto {
     private Integer price;
     @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private Integer count;
-    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
     private Set<Category> categories;
 
     @JsonInclude(value = JsonInclude.Include.NON_EMPTY)

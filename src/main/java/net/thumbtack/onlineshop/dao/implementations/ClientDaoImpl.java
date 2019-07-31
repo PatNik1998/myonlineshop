@@ -3,6 +3,7 @@ package net.thumbtack.onlineshop.dao.implementations;
 import net.thumbtack.onlineshop.dao.ClientDao;
 import net.thumbtack.onlineshop.entities.Client;
 import net.thumbtack.onlineshop.common.HibernateSessionFactory;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
@@ -51,20 +52,38 @@ public class ClientDaoImpl implements ClientDao {
 
     public void update(Client client) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        session.beginTransaction();
-        session.update(client);
-        session.getTransaction().commit();
-        if (session.isOpen()) {
-            session.close();
+        try{
+            session.beginTransaction();
+            session.update(client);
+            session.getTransaction().commit();
+        }catch (HibernateException hibernateEx) {
+            try {
+                session.getTransaction().rollback();
+            } catch(RuntimeException runtimeEx){}
+            hibernateEx.printStackTrace();
+        } finally {
+            if(session!= null) {
+                session.close();
+            }
         }
     }
 
     public void add(Client client) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        session.beginTransaction();
-        session.save(client);
-        session.getTransaction().commit();
-        session.close();
+        try{
+            session.beginTransaction();
+            session.save(client);
+            session.getTransaction().commit();
+        }catch (HibernateException hibernateEx) {
+            try {
+                session.getTransaction().rollback();
+            } catch(RuntimeException runtimeEx){}
+            hibernateEx.printStackTrace();
+        } finally {
+            if(session!= null) {
+                session.close();
+            }
+        }
     }
 
     public void clear() {

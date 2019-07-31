@@ -33,9 +33,12 @@ public class CommonController {
     public UserDTO login(@RequestBody UserDTO dto, HttpServletResponse response) {
 
         UserDTO response1 =  userService.login(dto);
-        Cookie cookie = new Cookie("JAVASESSIONID", UUID.randomUUID().toString());
-        sessions.addSession(cookie.getValue(), response1.getId());
-        sessions.addTokens(response1.getId(),cookie);
+        if(dto.getErrors().size() == 0){
+            Cookie cookie = new Cookie("JAVASESSIONID", UUID.randomUUID().toString());
+            sessions.addSession(cookie.getValue(), response1.getId());
+            sessions.addTokens(response1.getId(),cookie);
+            response.addCookie(cookie);
+        }
         return response1;
 
     }

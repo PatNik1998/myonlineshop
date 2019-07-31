@@ -6,6 +6,8 @@ import net.thumbtack.onlineshop.dao.UserDao;
 import net.thumbtack.onlineshop.dao.implementations.AdministratorDaoImpl;
 import net.thumbtack.onlineshop.dto.*;
 import net.thumbtack.onlineshop.entities.*;
+import net.thumbtack.onlineshop.errors.UserErrorCode;
+import net.thumbtack.onlineshop.errors.UserServiceError;
 import net.thumbtack.onlineshop.service.Sessions;
 import net.thumbtack.onlineshop.service.AdministratorService;
 import net.thumbtack.onlineshop.service.UserService;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,7 +58,11 @@ public class AdministratorServiceImpl implements AdministratorService {
 
     public UserDTO editAdminProfile(String sessionId, UserDTO adminDTO) {
         Administrator admin = (Administrator) sessions.getUser(sessionId);
-
+        if(admin== null){
+            validator.clearField(adminDTO);
+            adminDTO.addError(new UserServiceError(UserErrorCode.INVALID_SESSION, "Wrong login or session!", "client"));
+            return adminDTO;
+        }
         validator.editAdminValidate(adminDTO);
         if (adminDTO.getErrors().isEmpty()) {
             admin.setPassword(adminDTO.getNewPassword());
@@ -75,209 +82,109 @@ public class AdministratorServiceImpl implements AdministratorService {
     }
 
     public OrdersListDTOWithTotal getOrdersListByClient(Integer clientId, Integer page){
-        List<Orders> os = adminDao.getOrdersOfClient(clientId, page);
-        OrdersListDTOWithTotal dto = new OrdersListDTOWithTotal();
-        dto.setOrders(new ArrayList<>());
-
-        for(Orders o : os){
-            OrderDTO o1 = new OrderDTO();
-            o1.setDate(o.getDate());
-
-            o1.setItems(new ArrayList<>());
-            for (Item i: o.getItems()) {
-                ItemDto it = new ItemDto();
-                ProductDto pr = new ProductDto();
-                pr.setCount(i.getProduct().getCount());
-                pr.setName(i.getProduct().getName());
-                pr.setId(i.getProduct().getIdProduct());
-                pr.setCategories(i.getProduct().getCategories());
-                pr.setPrice(i.getProduct().getPrice());
-
-                it.setAmount(i.getAmount());
-                it.setId(i.getId());
-                it.setProduct(pr);
-
-                o1.getItems().add(it);
-            }
-
-            o1.setSum(o.getSum());
-            dto.setSum(dto.getSum() + o.getSum());
-            dto.getOrders().add(o1);
-        }
-
-        return dto;
+        List<Orders> orders = adminDao.getOrdersOfClient(clientId, page);
+        return getDtoByOrders(orders);
     }
 
     public OrdersListDTOWithTotal getOrdersListByProduct(Integer productId, Integer page){
-        List<Orders> os = adminDao.getOrdersOfProduct(productId, page);
-        OrdersListDTOWithTotal dto = new OrdersListDTOWithTotal();
-        dto.setOrders(new ArrayList<>());
-
-        for(Orders o : os){
-            OrderDTO o1 = new OrderDTO();
-            o1.setDate(o.getDate());
-
-            o1.setItems(new ArrayList<>());
-            for (Item i: o.getItems()) {
-                ItemDto it = new ItemDto();
-                ProductDto pr = new ProductDto();
-                pr.setCount(i.getProduct().getCount());
-                pr.setName(i.getProduct().getName());
-                pr.setId(i.getProduct().getIdProduct());
-                pr.setCategories(i.getProduct().getCategories());
-                pr.setPrice(i.getProduct().getPrice());
-
-                it.setAmount(i.getAmount());
-                it.setId(i.getId());
-                it.setProduct(pr);
-
-                o1.getItems().add(it);
-            }
-
-            o1.setSum(o.getSum());
-            dto.setSum(dto.getSum() + o.getSum());
-            dto.getOrders().add(o1);
-        }
-
-        return dto;
+        List<Orders> orders = adminDao.getOrdersOfProduct(productId, page);
+        return getDtoByOrders(orders);
     }
 
     public TopSalesDto getTopCategorySales(Integer categoryId, Integer count){
-        List<Product> pp = adminDao.getTopSalesByCategory(categoryId, count);
-        TopSalesDto top = new TopSalesDto();
-        top.setProducts(new ArrayList<>());
-
-        for(Product p : pp){
-            ProductDto pr = new ProductDto();
-            pr.setCount(p.getCount());
-            pr.setName(p.getName());
-            pr.setId(p.getIdProduct());
-            pr.setCategories(p.getCategories());
-            pr.setPrice(p.getPrice());
-
-            top.getProducts().add(pr);
-        }
-        return top;
+        List<Product> products = adminDao.getTopSalesByCategory(categoryId, count);
+        return getTopSalesByProductList(products);
     }
 
     public CategoriesListDto getTopClientCategories(Integer clientId, Integer count){
-        List<Category> pp = adminDao.getTopClientCategories(clientId, count);
+        List<Category> categories = adminDao.getTopClientCategories(clientId, count);
         CategoriesListDto top = new CategoriesListDto();
         top.setCategories(new ArrayList<>());
 
-        for(Category p : pp){
-            CategoryDto pr = new CategoryDto();
-            pr.setName(p.getName());
-            pr.setId(p.getIdCategory());
-            if(p.getParentCategory() != null)
-                pr.setParentId(p.getParentCategory().getIdCategory());
+        for(Category category : categories){
+            CategoryDto categoryDto = new CategoryDto();
+            categoryDto.setName(category.getName());
+            categoryDto.setId(category.getIdCategory());
+            if(category.getParentCategory() != null)
+                categoryDto.setParentId(category.getParentCategory().getIdCategory());
 
-            top.getCategories().add(pr);
+            top.getCategories().add(categoryDto);
         }
         return top;
     }
 
 
     public TopSalesDto getMonthlyTopSales(Integer count){
-        List<Product> pp = adminDao.getMonthlyTopSales(count);
-        TopSalesDto top = new TopSalesDto();
-        top.setProducts(new ArrayList<>());
-
-        for(Product p : pp){
-            ProductDto pr = new ProductDto();
-            pr.setCount(p.getCount());
-            pr.setName(p.getName());
-            pr.setId(p.getIdProduct());
-            pr.setCategories(p.getCategories());
-            pr.setPrice(p.getPrice());
-
-            top.getProducts().add(pr);
-        }
-        return top;
+        List<Product> products = adminDao.getMonthlyTopSales(count);
+        return getTopSalesByProductList(products);
     }
 
     public TopSalesDto getYearlyTopSales(Integer count){
-        List<Product> pp = adminDao.getYearlyTopSales(count);
-        TopSalesDto top = new TopSalesDto();
-        top.setProducts(new ArrayList<>());
-
-        for(Product p : pp){
-            ProductDto pr = new ProductDto();
-            pr.setCount(p.getCount());
-            pr.setName(p.getName());
-            pr.setId(p.getIdProduct());
-            pr.setCategories(p.getCategories());
-            pr.setPrice(p.getPrice());
-
-            top.getProducts().add(pr);
-        }
-        return top;
+        List<Product> products = adminDao.getYearlyTopSales(count);
+        return getTopSalesByProductList(products);
     }
 
     public OrdersListDTOWithTotal getOrderList(Integer page){
-        List<Orders> os = adminDao.getOrderList(page);
-        OrdersListDTOWithTotal dto = new OrdersListDTOWithTotal();
-        dto.setOrders(new ArrayList<>());
-
-        for(Orders o : os){
-            OrderDTO o1 = new OrderDTO();
-            o1.setDate(o.getDate());
-
-            o1.setItems(new ArrayList<>());
-            for (Item i: o.getItems()) {
-                ItemDto it = new ItemDto();
-                ProductDto pr = new ProductDto();
-                pr.setCount(i.getProduct().getCount());
-                pr.setName(i.getProduct().getName());
-                pr.setId(i.getProduct().getIdProduct());
-                pr.setCategories(i.getProduct().getCategories());
-                pr.setPrice(i.getProduct().getPrice());
-
-                it.setAmount(i.getAmount());
-                it.setId(i.getId());
-                it.setProduct(pr);
-
-                o1.getItems().add(it);
-            }
-
-            o1.setSum(o.getSum());
-            dto.setSum(dto.getSum() + o.getSum());
-            dto.getOrders().add(o1);
-        }
-        return dto;
+        List<Orders> orders = adminDao.getOrderList(page);
+        return getDtoByOrders(orders);
     }
 
     public OrdersListDTOWithTotal getTopOrdersByDate(Integer page){
-        List<Orders> os = adminDao.getTopOrdersByDate(page);
+        List<Orders> orders = adminDao.getTopOrdersByDate(page);
+        return getDtoByOrders(orders);
+    }
+
+    OrdersListDTOWithTotal getDtoByOrders(List<Orders> orders){
         OrdersListDTOWithTotal dto = new OrdersListDTOWithTotal();
+        dto.setSum(0.0);
         dto.setOrders(new ArrayList<>());
 
-        for(Orders o : os){
-            OrderDTO o1 = new OrderDTO();
-            o1.setDate(o.getDate());
+        for(Orders o : orders){
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.setDate(o.getDate());
 
-            o1.setItems(new ArrayList<>());
+            orderDTO.setItems(new ArrayList<>());
             for (Item i: o.getItems()) {
-                ItemDto it = new ItemDto();
-                ProductDto pr = new ProductDto();
-                pr.setCount(i.getProduct().getCount());
-                pr.setName(i.getProduct().getName());
-                pr.setId(i.getProduct().getIdProduct());
-                pr.setCategories(i.getProduct().getCategories());
-                pr.setPrice(i.getProduct().getPrice());
+                ItemDto itemDto = new ItemDto();
+                ProductDto productDto = new ProductDto();
+                productDto.setCount(i.getProduct().getCount());
+                productDto.setName(i.getProduct().getName());
+                productDto.setId(i.getProduct().getIdProduct());
+                productDto.setCategories(new HashSet<>());
+                productDto.setPrice(i.getProduct().getPrice());
 
-                it.setAmount(i.getAmount());
-                it.setId(i.getId());
-                it.setProduct(pr);
+                itemDto.setAmount(i.getAmount());
+                itemDto.setId(i.getId());
+                itemDto.setProduct(productDto);
 
-                o1.getItems().add(it);
+                orderDTO.getItems().add(itemDto);
             }
 
-            o1.setSum(o.getSum());
+            orderDTO.setSum(o.getSum());
+            orderDTO.setId(o.getId());
             dto.setSum(dto.getSum() + o.getSum());
-            dto.getOrders().add(o1);
+            dto.getOrders().add(orderDTO);
         }
+
+        if(dto.getSum()==0)dto.setSum(null);
         return dto;
+    }
+
+    TopSalesDto getTopSalesByProductList(List<Product> products){
+        TopSalesDto top = new TopSalesDto();
+        top.setProducts(new ArrayList<>());
+
+        for(Product p : products){
+            ProductDto product = new ProductDto();
+            product.setCount(p.getCount());
+            product.setName(p.getName());
+            product.setId(p.getIdProduct());
+            //pr.setCategories(p.getCategories());
+            product.setPrice(p.getPrice());
+
+            top.getProducts().add(product);
+        }
+        return top;
     }
 
 }

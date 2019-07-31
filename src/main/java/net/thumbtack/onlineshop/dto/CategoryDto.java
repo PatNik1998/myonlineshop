@@ -23,7 +23,7 @@ public class CategoryDto {
         errors = new ArrayList<>();
     }
 
-    public CategoryDto(int id, String name, int parentId, String parentName) {
+    public CategoryDto(int id, String name, Integer parentId, String parentName) {
         this.id = id;
         this.name = name;
         this.parentId = parentId;
@@ -33,6 +33,9 @@ public class CategoryDto {
 
     public void setParentId(Integer parentId) {
         this.parentId = parentId;
+    }
+    public Integer getParentId() {
+        return parentId;
     }
 
     public List<UserServiceError> getErrors() {
@@ -61,14 +64,6 @@ public class CategoryDto {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
     }
 
     public String getParentName() {

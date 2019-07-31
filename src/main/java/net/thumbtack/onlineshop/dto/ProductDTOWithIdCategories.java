@@ -1,10 +1,17 @@
 package net.thumbtack.onlineshop.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 public class ProductDTOWithIdCategories {
-    private int id;
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private Integer id;
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private String name;
-    private int price;
-    private int count;
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private Integer price;
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private Integer count;
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
     private int[] categories;
 
     public ProductDTOWithIdCategories() {

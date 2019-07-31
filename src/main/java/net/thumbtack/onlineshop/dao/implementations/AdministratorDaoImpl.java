@@ -3,11 +3,17 @@ package net.thumbtack.onlineshop.dao.implementations;
 import net.thumbtack.onlineshop.dao.AdministratorDao;
 import net.thumbtack.onlineshop.entities.*;
 import net.thumbtack.onlineshop.common.HibernateSessionFactory;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -63,20 +69,38 @@ public class AdministratorDaoImpl implements AdministratorDao {
 
     public void update(Administrator administrator) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        session.beginTransaction();
-        session.update(administrator);
-        session.getTransaction().commit();
-        if (session.isOpen()) {
-            session.close();
+        try {
+            session.beginTransaction();
+            session.update(administrator);
+            session.getTransaction().commit();
+        }catch (HibernateException hibernateEx) {
+            try {
+                session.getTransaction().rollback();
+            } catch (RuntimeException runtimeEx) {}
+            hibernateEx.printStackTrace();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
     }
 
     public void add(Administrator administrator) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        session.beginTransaction();
-        session.save(administrator);
-        session.getTransaction().commit();
-        session.close();
+        try{
+            session.beginTransaction();
+            session.save(administrator);
+            session.getTransaction().commit();
+        }catch (HibernateException hibernateEx) {
+            try {
+                session.getTransaction().rollback();
+            } catch (RuntimeException runtimeEx) {}
+            hibernateEx.printStackTrace();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
     }
 
     public void clear() {
@@ -93,34 +117,57 @@ public class AdministratorDaoImpl implements AdministratorDao {
 
     private final int ItemsPerPage = 20;
 
-    public List<Orders> getOrdersOfClient(Integer clientId, Integer page){
+    public List<Orders> getOrdersOfClient(Integer clientId, Integer page) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         session.beginTransaction();
         int offset = ItemsPerPage * page;
-        String hql = String.format("from %s where id  in (select Client_id from client_orders where Client_id = %s ) LIMIT %s,%s",
-                Orders.class.getCanonicalName(), clientId, offset,ItemsPerPage);
-        Query SQLQuery = session.createQuery(hql);
-        List<Orders> orders = SQLQuery.list();
-        session.getTransaction().commit();
-        session.close();
+        String hql = String.format("from Orders where id in (select o.id from Client c inner join c.orders o where c.id = %s )",
+                clientId, offset, ItemsPerPage);
 
-//        for(Orders o : orders){
-//            o.setItems(getItemsByOrder(o.getId()));
-//        }
-
+        List<Orders> orders = null;
+        try{
+            Query SQLQuery = session.createQuery(hql);
+            SQLQuery.setFirstResult(offset);
+            SQLQuery.setMaxResults(ItemsPerPage);
+            orders = SQLQuery.list();
+            session.getTransaction().commit();
+        }catch (HibernateException hibernateEx) {
+            try {
+                session.getTransaction().rollback();
+            } catch (RuntimeException runtimeEx) {}
+            hibernateEx.printStackTrace();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
         return orders;
     }
-    public List<Orders> getOrdersOfProduct(Integer productId, Integer page){
+    public List<Orders> getOrdersOfProduct(Integer productId, Integer page) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         session.beginTransaction();
         int offset = ItemsPerPage * page;
-        String hql = String.format("from %s where id  in (select Orders_Id from orders_item where items_id in (" +
-                "(select id from item where product_idProduct = %s)"+
-                ") LIMIT %s,%s", Orders.class.getCanonicalName(), productId.toString(), offset, ItemsPerPage);
-        Query SQLQuery = session.createQuery(hql);
-        List<Orders> orders = SQLQuery.list();
-        session.getTransaction().commit();
-        session.close();
+        String hql = String.format("from %s where id  in (select o.id from Orders o inner join o.items i where i.id in (" +
+                "(select i.id from Item i inner join i.product p where p.id = %s)" +
+                "))", Orders.class.getCanonicalName(), productId.toString());
+
+        List<Orders> orders = null;
+        try {
+            Query SQLQuery = session.createQuery(hql);
+            SQLQuery.setFirstResult(offset);
+            SQLQuery.setMaxResults(ItemsPerPage);
+            orders = SQLQuery.list();
+            session.getTransaction().commit();
+        }catch (HibernateException hibernateEx) {
+            try {
+             session.getTransaction().rollback();
+            } catch (RuntimeException runtimeEx) {}
+            hibernateEx.printStackTrace();
+        } finally {
+         if (session != null) {
+             session.close();
+         }
+        }
 
 //        for(Orders o : orders){
 //            o.setItems(getItemsByOrder(o.getId()));
@@ -133,11 +180,25 @@ public class AdministratorDaoImpl implements AdministratorDao {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         session.beginTransaction();
         int offset = ItemsPerPage * page;
-        String hql = String.format("from %s LIMIT %s,%s", Orders.class.getCanonicalName(), offset, ItemsPerPage);
-        Query SQLQuery = session.createQuery(hql);
-        List<Orders> orders = SQLQuery.list();
-        session.getTransaction().commit();
-        session.close();
+        String hql = String.format("from %s", Orders.class.getCanonicalName());
+        List<Orders> orders = null;
+        try {
+            Query SQLQuery = session.createQuery(hql);
+            SQLQuery.setFirstResult(offset);
+            SQLQuery.setMaxResults(ItemsPerPage);
+            orders = SQLQuery.list();
+            session.getTransaction().commit();
+        }catch (HibernateException hibernateEx) {
+            try {
+                session.getTransaction().rollback();
+            } catch (RuntimeException runtimeEx) {
+            }
+            hibernateEx.printStackTrace();
+        } finally {
+            if(session!= null) {
+                session.close();
+            }
+        }
 
 //        for(Orders o : orders){
 //            o.setItems(getItemsByOrder(o.getId()));
@@ -152,14 +213,26 @@ public class AdministratorDaoImpl implements AdministratorDao {
 
         int offset = ItemsPerPage * page;
         String hql = String.format("from %s where id in " +
-                "(select id from orders, COUNT(*) as count " +
-                "GROUP BY YEAR(date), month(date), day(date) ORDER BY count DESC LIMIT %s,%s)", Orders.class.getCanonicalName(), offset, ItemsPerPage);
+                "(select id from Orders o " +
+                "GROUP BY YEAR(date), month(date), day(date) ORDER BY count(o) DESC, date DESC)", Orders.class.getCanonicalName());
 
-        Query SQLQuery = session.createQuery(hql);
-        List<Orders> prods = SQLQuery.list();
-        session.getTransaction().commit();
-        session.close();
-
+        List<Orders> prods = null;
+        try {
+            Query SQLQuery = session.createQuery(hql);
+            SQLQuery.setFirstResult(offset);
+            SQLQuery.setMaxResults(ItemsPerPage);
+            prods = SQLQuery.list();
+            session.getTransaction().commit();
+        }catch (HibernateException hibernateEx) {
+            try {
+                session.getTransaction().rollback();
+            } catch(RuntimeException runtimeEx){}
+            hibernateEx.printStackTrace();
+        } finally {
+            if(session!= null) {
+                session.close();
+            }
+        }
         return prods;
     }
 
@@ -168,15 +241,28 @@ public class AdministratorDaoImpl implements AdministratorDao {
         session.beginTransaction();
 
         String hql = String.format("from %s where id in " +
-                "(select category_id from product_category where product_id in " +
-                "(select product_idProduct, COUNT(product_idProduct) as count from item where id in " +
-                "(select items_id from orders_item where Orders_id in (select orders_id from client_orders where Client_id = %s)) " +
-                "GROUP BY product_idProduct ORDER BY count DESC LIMIT %s))", Category.class.getCanonicalName(), clientId, count);
+                "(select c.id from Category c inner join c.products p where p.id in " +
+                "(select p.id from Item i inner join i.product where i.id in " +
+                "(select i1.id from Orders o inner join o.items i1 where o.id in " +
+                "(select o1.id from Client cl inner join cl.orders o1 where cl.id = %s))) " +
+                "GROUP BY p.id ORDER BY count(p.id) DESC)", Category.class.getCanonicalName(), clientId);
 
-        Query SQLQuery = session.createQuery(hql);
-        List<Category> prods = SQLQuery.list();
-        session.getTransaction().commit();
-        session.close();
+        List<Category> prods = null;
+        try {
+            Query SQLQuery = session.createQuery(hql);
+            SQLQuery.setMaxResults(count);
+            prods = SQLQuery.list();
+            session.getTransaction().commit();
+        }catch (HibernateException hibernateEx) {
+            try {
+                session.getTransaction().rollback();
+            } catch(RuntimeException runtimeEx){}
+            hibernateEx.printStackTrace();
+        } finally {
+            if(session!= null) {
+                session.close();
+            }
+        }
 
         return prods;
     }
@@ -185,40 +271,67 @@ public class AdministratorDaoImpl implements AdministratorDao {
         session.beginTransaction();
 
         String hql = String.format("from %s where id in (" +
-                "select product_idProduct, COUNT(product_idProduct) as count from item where product_idProduct in " +
-                "(select product_id from product_category where category_id = %s) " +
-                "GROUP BY product_idProduct ORDER BY count DESC LIMIT %s)", Product.class.getCanonicalName(), categoryId, count);
+                "select p1.id from Item i inner join i.product p1 inner join p1.categories c where c.id = %s " +
+                "GROUP BY p1.id ORDER BY count(p1.id) DESC)", Product.class.getCanonicalName(), categoryId, count);
 
-        Query SQLQuery = session.createQuery(hql);
-        List<Product> prods = SQLQuery.list();
-        session.getTransaction().commit();
-        session.close();
+        List<Product> prods = null;
+        try {
+            Query SQLQuery = session.createQuery(hql);
+            SQLQuery.setFirstResult(count);
+            prods = SQLQuery.list();
+            session.getTransaction().commit();
+        }catch (HibernateException hibernateEx) {
+            try {
+                session.getTransaction().rollback();
+            } catch(RuntimeException runtimeEx){}
+            hibernateEx.printStackTrace();
+        } finally {
+            if(session!= null) {
+                session.close();
+            }
+        }
 
         return prods;
     }
 
     public List<Product> getMonthlyTopSales(Integer count){
-        return getTimingTopSales(count, "interval 1 month");
+        return getTimingTopSales(count, 31);
     }
 
 
     public List<Product> getYearlyTopSales(Integer count){
-        return getTimingTopSales(count, "interval 1 year");
+        return getTimingTopSales(count, 365);
     }
 
-    private List<Product> getTimingTopSales(Integer count, String interval){
+    private List<Product> getTimingTopSales(Integer count, Integer daysBefore){
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         session.beginTransaction();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String frmDate = format.format(Date.from(Instant.now().minus(Duration.ofDays(daysBefore))));
+        String enDate = format.format(Date.from(Instant.now()));
 
         String hql = String.format("from %s where id in (" +
-                "select product_idProduct, COUNT(product_idProduct) as count from item where product_idProduct in " +
-                "(select id from orders where id in (select id from orders_item where id = item.id) and date > date_sub(now(), %s))" +
-                "GROUP BY product_idProduct ORDER BY count DESC LIMIT %s)", Product.class.getCanonicalName(), interval,count);
-
-        Query SQLQuery = session.createQuery(hql);
-        List<Product> prods = SQLQuery.list();
-        session.getTransaction().commit();
-        session.close();
+                "select p.id from Item i inner join i.product p where i.id in " +
+                "(select i1.id from Orders o inner join o.items i1 where " +
+                " o.date between '%s' and '%s') " +
+                "GROUP BY p.id ORDER BY count(p.id) DESC)", Product.class.getCanonicalName(),frmDate, enDate);
+        List<Product> prods = null;
+        try{
+            Query SQLQuery = session.createQuery(hql);
+            prods = SQLQuery.list();
+            SQLQuery.setMaxResults(count);
+            session.getTransaction().commit();
+            session.close();
+        } catch (HibernateException hibernateEx) {
+            try {
+                session.getTransaction().rollback();
+            } catch(RuntimeException runtimeEx){}
+            hibernateEx.printStackTrace();
+        } finally {
+            if(session!= null) {
+                session.close();
+            }
+        }
 
         return prods;
     }
@@ -228,11 +341,22 @@ public class AdministratorDaoImpl implements AdministratorDao {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
 
         session.beginTransaction();
-        String hql = String.format("from %s where id  in (select id from orders_item where Orders_id = %s )", Item.class.getCanonicalName(), orderId.toString());
-        Query SQLQuery = session.createQuery(hql);
-        List<Item> items = SQLQuery.list();
-        session.getTransaction().commit();
-        session.close();
+        String hql = String.format("from Item where id in (select i.id from Orders o inner join o.items i where o.id = %s )", orderId.toString());
+        List<Item> items = null;
+        try{
+            Query SQLQuery = session.createQuery(hql);
+            items = SQLQuery.list();
+            session.getTransaction().commit();
+        } catch (HibernateException hibernateEx) {
+            try {
+                session.getTransaction().rollback();
+            } catch(RuntimeException runtimeEx){}
+            hibernateEx.printStackTrace();
+        } finally {
+            if(session!= null) {
+                session.close();
+            }
+        }
 
         return items;
     }
